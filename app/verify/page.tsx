@@ -24,7 +24,7 @@ const VerifyEmail = () => {
           <Image src="/ritmanLogo.jpg" alt="Logo" width={80} height={80} />
         </div>
         <h2 className="text-2xl font-bold text-primary mb-10">Verification</h2>
-        <section className="space-y-6">
+        <form className="space-y-6">
           <div>
             <span className="text-[0.9rem]">
               A verification code has been sent to
@@ -56,7 +56,7 @@ const VerifyEmail = () => {
               onClick={handleVerification}
             />
           </div>
-        </section>
+        </form>
       </div>
     </div>
   );

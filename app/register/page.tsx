@@ -38,7 +38,7 @@ const RegistrationForm = () => {
           <Image src="/ritmanLogo.jpg" alt="Logo" width={80} height={80} />
         </div>
         <h2 className="text-2xl font-bold text-primary mb-6">Registration</h2>
-        <section className="space-y-6">
+        <form className="space-y-6">
           <div className="grid lg:grid-cols-3 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700">
@@ -129,7 +129,7 @@ const RegistrationForm = () => {
               onClick={handleSubmit}
             />
           </div>
-        </section>
+        </form>
       </div>
     </div>
   );
