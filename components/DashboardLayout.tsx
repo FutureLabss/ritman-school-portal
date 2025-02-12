@@ -68,7 +68,7 @@ const DashboardLayout = ({ children }: { children: ReactNode }) => {
             </div>
             <div>
               <p className="text-sm">Student ID</p>
-              <p className="text-sm font-semibold">2345678</p>
+              <p className="text-sm font-semibold">23456745</p>
               <p className="text-sm">Level</p>
             </div>
           </section>
@@ -119,7 +119,7 @@ const DashboardLayout = ({ children }: { children: ReactNode }) => {
                 <p>-----</p>
               </div>
               <div className="border-l flex-1 border-black text-center">
-                <p className="font-bold">Programme type</p>
+                <p className="font-bold">Status</p>
                 <p>-----</p>
               </div>
             </div>
