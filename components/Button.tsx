@@ -1,7 +1,7 @@
 import React from "react";
 
 interface ButtonProps {
-  onClick: () => void;
+  onClick?: () => void;
   label: string;
   disabled?: boolean;
   className?: string;
