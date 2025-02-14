@@ -11,6 +11,8 @@ interface InputProps {
   className?: string;
   icon?: React.ReactNode;
   name?: string;
+  checked?: boolean;
+  id?: string;
 }
 
 const Input: React.FC<InputProps> = ({
@@ -22,6 +24,8 @@ const Input: React.FC<InputProps> = ({
   className = "",
   icon,
   name,
+  checked,
+  id = "",
 }) => {
   const [showPassword, setShowPassword] = useState(false);
 
@@ -38,6 +42,8 @@ const Input: React.FC<InputProps> = ({
         name={name}
         placeholder={placeholder}
         disabled={disabled}
+        checked={checked}
+        id={id}
         className="input w-full border-none focus:outline-none py-1"
       />
       {type === "password" && (
