@@ -4,7 +4,7 @@
 
 @layer components {
   .input {
-    @apply border-gray-400/80 rounded-md border sm:max-w-[10.25rem] w-full px-2;
+    @apply border-gray-400/80 rounded-md border w-full px-2;
   }
 }
 

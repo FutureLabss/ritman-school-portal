@@ -57,7 +57,7 @@ export default function MultiStepForm() {
 
       <div className="w-3/4 bg-white flex flex-col max-w-4xl py-8 px-6">
         <div className="flex justify-between gap-8 ">
-          <div className="max-w-[36.4375rem] space-y-6">
+          <div className="max-w-[36.4375rem] pt-4 space-y-6">
             <h2 className="text-3xl font-medium text-primary">
               Students Admission Form
             </h2>
