@@ -1,6 +1,7 @@
 // components/DashboardLayout.js
 "use client";
 import { useState, useEffect } from "react";
+import { useAuth } from "@/context/AuthContext";
 import { useRouter, usePathname } from "next/navigation";
 import { USER_NAV_ITEMS, ADMIN_NAV_ITEMS } from "../utils/navigation";
 import { ReactNode } from "react";
@@ -14,6 +15,9 @@ const DashboardLayout = ({ children }: { children: ReactNode }) => {
   const pathname = usePathname();
   const [activeNav, setActiveNav] = useState("");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const authContext = useAuth();
+  const user = authContext?.user;
+  const loading = authContext?.loading;
 
   useEffect(() => {
     // Sync active navigation with the current route
@@ -32,6 +36,14 @@ const DashboardLayout = ({ children }: { children: ReactNode }) => {
   const toggleSidebar = () => {
     setIsSidebarOpen((prev) => !prev);
   };
+
+  useEffect(() => {
+    if (!loading && !user) {
+      router.push("/auth/login");
+    }
+  }, [user, loading]);
+
+  if (loading) return <p>Loading...</p>;
 
   return (
     <div className="flex min-h-screen bg-gray-100">

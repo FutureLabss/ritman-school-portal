@@ -7,6 +7,7 @@ interface DropdownProps {
   disabled?: boolean;
   className?: string;
   name?: string;
+  required?: boolean;
 }
 
 const Dropdown: React.FC<DropdownProps> = ({
@@ -16,6 +17,7 @@ const Dropdown: React.FC<DropdownProps> = ({
   disabled = false,
   className = "",
   name,
+  required,
 }) => {
   return (
     <select
@@ -23,6 +25,7 @@ const Dropdown: React.FC<DropdownProps> = ({
       name={name}
       onChange={onChange}
       disabled={disabled}
+      required={required}
       className={`dropdown ${className}`}
     >
       {options.map((option) => (
