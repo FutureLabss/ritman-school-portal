@@ -8,7 +8,7 @@ import Button from "./Button";
 import Image from "next/image";
 
 const steps = [
-  "Personal details",
+  "Personal Details",
   "Education",
   "Identification",
   "Declaration",
