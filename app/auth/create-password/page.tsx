@@ -2,17 +2,31 @@
 import Image from "next/image";
 import Input from "@/components/Input";
 import Button from "@/components/Button";
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
+import { useMutation } from "react-query";
+import { CreatePasswordFormDataType } from "@/utils/types";
+import { useAuth } from "@/context/AuthContext";
 
 const CreatePassword = () => {
-  const router = useRouter();
-  const [formData, setFormData] = useState({
-    firstName: "John Doe",
-    email: "johndoe@gmail.com",
+  const createPassword = useAuth()?.createPassword;
+  const error = useAuth()?.error;
+  const [formError, setFormError] = useState<string | null>(null);
+  const [formData, setFormData] = useState<CreatePasswordFormDataType>({
+    first_name: "",
+    email: "",
     password: "",
-    confirmPassword: "",
+    confirm_password: "",
   });
+
+  useEffect(() => {
+    // fixing prerendering issue
+    const userData = JSON.parse(localStorage.getItem("userReg") || "{}");
+    setFormData((prevData) => ({
+      ...prevData,
+      first_name: userData.first_name || "",
+      email: userData.email || "",
+    }));
+  }, []);
 
   const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -22,8 +36,22 @@ const CreatePassword = () => {
     }));
   };
 
-  const handleSubmit = () => {
-    router.push("/verify");
+  const mutation = useMutation((data: CreatePasswordFormDataType) => {
+    if (createPassword) {
+      return createPassword(data);
+    }
+    throw new Error("Create password function is not available");
+  });
+
+  const handleSubmit = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    e.preventDefault();
+
+    if (!formData.password || !formData.confirm_password) {
+      setFormError("Please fill in all fields.");
+      return;
+    }
+    setFormError(null);
+    mutation.mutate(formData);
   };
 
   return (
@@ -42,8 +70,8 @@ const CreatePassword = () => {
                 First name
               </label>
               <Input
-                name="firstName"
-                value={formData.firstName}
+                name="first_name"
+                value={formData.first_name}
                 disabled
                 type="text"
                 className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
@@ -78,8 +106,8 @@ const CreatePassword = () => {
                 Confirm Password
               </label>
               <Input
-                name="confirmPassword"
-                value={formData.confirmPassword}
+                name="confirm_password"
+                value={formData.confirm_password}
                 onChange={handlePasswordChange}
                 type="password"
                 className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
@@ -94,10 +122,16 @@ const CreatePassword = () => {
           <div className="flex justify-start mt-4">
             <Button
               className="px-8 py-3 bg-primary min-w-[100%] lg:min-w-[30%] text-white rounded-full hover:bg-[#0F1739] transition-all"
-              label="Proceed"
+              label={mutation.isLoading ? "Creating..." : "Create Password"}
               onClick={handleSubmit}
+              type="submit"
+              disabled={mutation.isLoading}
             />
           </div>
+          {formError && (
+            <p className="text-red-500 text-sm mt-2">{formError}</p>
+          )}
+          {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
         </form>
       </div>
     </div>

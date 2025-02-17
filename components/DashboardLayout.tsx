@@ -1,6 +1,7 @@
 // components/DashboardLayout.js
 "use client";
 import { useState, useEffect } from "react";
+import { useAuth } from "@/context/AuthContext";
 import { useRouter, usePathname } from "next/navigation";
 import { USER_NAV_ITEMS, ADMIN_NAV_ITEMS } from "../utils/navigation";
 import { ReactNode } from "react";
@@ -8,12 +9,17 @@ import { FaBars, FaTimes } from "react-icons/fa";
 import { FaRegBell } from "react-icons/fa";
 import { MdOutlineKeyboardArrowRight } from "react-icons/md";
 import Image from "next/image";
+import { UserDataTypes } from "@/utils/types";
 
 const DashboardLayout = ({ children }: { children: ReactNode }) => {
   const router = useRouter();
   const pathname = usePathname();
   const [activeNav, setActiveNav] = useState("");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [getUserData, setGetUserData] = useState<UserDataTypes>();
+  const authContext = useAuth();
+  const user = authContext?.user;
+  const loading = authContext?.loading;
 
   useEffect(() => {
     // Sync active navigation with the current route
@@ -32,6 +38,19 @@ const DashboardLayout = ({ children }: { children: ReactNode }) => {
   const toggleSidebar = () => {
     setIsSidebarOpen((prev) => !prev);
   };
+
+  useEffect(() => {
+    if (!loading && !user) {
+      router.push("/auth/login");
+    }
+  }, [user, loading, router]);
+
+  useEffect(() => {
+    const getUserdata = JSON.parse(localStorage.getItem("user") || "{}");
+    setGetUserData(getUserdata);
+  }, []);
+
+  if (loading) return <p>Loading...</p>;
 
   return (
     <div className="flex min-h-screen bg-gray-100">
@@ -68,7 +87,9 @@ const DashboardLayout = ({ children }: { children: ReactNode }) => {
             </div>
             <div>
               <p className="text-sm">Student ID</p>
-              <p className="text-sm font-semibold">23456745</p>
+              <p className="text-sm font-semibold">
+                {getUserData ? getUserData.roles[0]?.id : "---"}
+              </p>
               <p className="text-sm">Level</p>
             </div>
           </section>
@@ -111,15 +132,15 @@ const DashboardLayout = ({ children }: { children: ReactNode }) => {
                 <p>-----</p>
               </div>
               <div className="border-l flex-1 border-black text-center">
-                <p className="font-bold">Programme type</p>
+                <p className="font-bold">Faculty</p>
                 <p>-----</p>
               </div>
               <div className="border-l flex-1 border-black text-center">
-                <p className="font-bold">Programme type</p>
+                <p className="font-bold">Department</p>
                 <p>-----</p>
               </div>
               <div className="border-l flex-1 border-black text-center">
-                <p className="font-bold">Status</p>
+                <p className="font-bold">Admission Status</p>
                 <p>-----</p>
               </div>
             </div>
@@ -136,7 +157,7 @@ const DashboardLayout = ({ children }: { children: ReactNode }) => {
                   height={50}
                 />
               </span>
-              <span>John Big man</span>
+              <span>{getUserData ? getUserData.fullname : "---"}</span>
               <span>
                 <MdOutlineKeyboardArrowRight />
               </span>
