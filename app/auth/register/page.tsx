@@ -4,18 +4,24 @@ import Input from "@/components/Input";
 import Dropdown from "@/components/DropDown";
 import Button from "@/components/Button";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useMutation } from "react-query";
+import { useAuth } from "@/context/AuthContext";
+import { RegisterFormDataType } from "@/utils/types";
+import Link from "next/link";
 
 const RegistrationForm = () => {
-  const router = useRouter();
-  const [formData, setFormData] = useState({
-    firstName: "",
-    middleName: "",
-    lastName: "",
+  const authContext = useAuth();
+  const register = authContext?.register;
+  const error = authContext?.error;
+  const [formData, setFormData] = useState<RegisterFormDataType>({
+    first_name: "",
+    middle_name: "",
+    last_name: "",
     email: "",
     dob: "",
-    program: "",
+    choosen_program: "",
   });
+  const [formError, setFormError] = useState<string | null>(null);
 
   const handleFieldChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -27,8 +33,39 @@ const RegistrationForm = () => {
     }));
   };
 
-  const handleSubmit = () => {
-    router.push("/create-password");
+  const mutation = useMutation((data: RegisterFormDataType) => {
+    if (register) {
+      // Format the date of birth to "YYYY-MM-DD"
+      const formattedData = {
+        ...data,
+        dob: new Date(data.dob).toISOString().split("T")[0],
+      };
+      return register(formattedData);
+    }
+    throw new Error("Register function is not available");
+  });
+
+  const handleSubmit = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    e.preventDefault();
+    // Validate form data
+    if (
+      !formData.first_name ||
+      !formData.middle_name ||
+      !formData.last_name ||
+      !formData.email ||
+      !formData.dob ||
+      !formData.choosen_program
+    ) {
+      setFormError("Please fill in all fields.");
+      return;
+    }
+    setFormError(null);
+    mutation.mutate(formData, {
+      onSuccess: (): void => {
+        // router.push("/auth/verify");
+      },
+      onError: (): void => {},
+    });
   };
 
   return (
@@ -45,8 +82,9 @@ const RegistrationForm = () => {
                 First name
               </label>
               <Input
-                name="firstName"
-                value={formData.firstName}
+                name="first_name"
+                required
+                value={formData.first_name}
                 onChange={handleFieldChange}
                 type="text"
                 className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
@@ -57,8 +95,9 @@ const RegistrationForm = () => {
                 Middle name
               </label>
               <Input
-                name="middleName"
-                value={formData.middleName}
+                name="middle_name"
+                required
+                value={formData.middle_name || ""}
                 onChange={handleFieldChange}
                 type="text"
                 className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
@@ -69,8 +108,9 @@ const RegistrationForm = () => {
                 Last name
               </label>
               <Input
-                name="lastName"
-                value={formData.lastName}
+                name="last_name"
+                required
+                value={formData.last_name}
                 onChange={handleFieldChange}
                 type="text"
                 className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
@@ -85,6 +125,7 @@ const RegistrationForm = () => {
               </label>
               <Input
                 name="email"
+                required
                 value={formData.email}
                 onChange={handleFieldChange}
                 type="email"
@@ -97,6 +138,7 @@ const RegistrationForm = () => {
               </label>
               <Input
                 name="dob"
+                required
                 value={formData.dob}
                 onChange={handleFieldChange}
                 type="date"
@@ -108,27 +150,41 @@ const RegistrationForm = () => {
                 Chosen Program
               </label>
               <Dropdown
-                name="program"
+                name="choosen_program"
+                required
                 options={[
-                  { value: "program1", label: "Program 1" },
-                  { value: "program2", label: "Program 2" },
+                  { value: "", label: "" },
+                  { value: "chemistry", label: "chemistry" },
                   { value: "program3", label: "Program 3" },
                 ]}
-                value={formData.program}
+                value={formData.choosen_program}
                 onChange={handleFieldChange}
                 className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
               />
             </div>
           </div>
 
+          <div className="text-[0.8rem] w-full flex gap-2">
+            <span>Already have an account?</span>
+            <Link href="/auth/login">
+              <span className="text-secondary">Login</span>
+            </Link>
+          </div>
+
           {/* Submit Button */}
           <div className="flex justify-start mt-4">
             <Button
               className="px-8 py-3 bg-primary min-w-[100%] lg:min-w-[30%] text-white rounded-full hover:bg-[#0F1739] transition-all"
-              label="Proceed"
+              label={mutation.isLoading ? "Registering..." : "Proceed"}
               onClick={handleSubmit}
+              type="submit"
+              disabled={mutation.isLoading}
             />
           </div>
+          {formError && (
+            <p className="text-red-500 text-sm mt-2">{formError}</p>
+          )}
+          {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
         </form>
       </div>
     </div>

@@ -1,7 +1,10 @@
-import type { Metadata } from "next";
+"use client";
+
+// import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
 import "./globals.css";
-// import Image from "next/image";
+import { AuthProvider } from "@/context/AuthContext";
+import { QueryClient, QueryClientProvider } from "react-query";
 
 const poppins = Poppins({
   variable: "--font-poppins",
@@ -9,10 +12,7 @@ const poppins = Poppins({
   weight: ["100", "200", "300", "400", "500", "600", "700", "800"],
 });
 
-export const metadata: Metadata = {
-  title: "Ritman School Portal",
-  description: "School Management System",
-};
+const queryClient = new QueryClient();
 
 export default function RootLayout({
   children,
@@ -22,10 +22,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${poppins.variable} antialiased`}>
-        {/* <div className="flex justify-start p-4 lg:p-10 lg:ml-20">
-          <Image src="/ritmanLogo.jpg" alt="Logo" width={80} height={80} />
-        </div> */}
-        {children}
+        <QueryClientProvider client={queryClient}>
+          <AuthProvider>{children}</AuthProvider>
+        </QueryClientProvider>
       </body>
     </html>
   );

@@ -11,6 +11,10 @@ interface InputProps {
   className?: string;
   icon?: React.ReactNode;
   name?: string;
+  required?: boolean;
+  maxLength?: number;
+  onPaste?: (e: React.ClipboardEvent<HTMLInputElement>) => void;
+  ref?: React.Ref<HTMLInputElement>;
   checked?: boolean;
   id?: string;
 }
@@ -24,6 +28,10 @@ const Input: React.FC<InputProps> = ({
   className = "",
   icon,
   name,
+  required,
+  maxLength,
+  onPaste,
+  ref,
   checked,
   id = "",
 }) => {
@@ -40,8 +48,12 @@ const Input: React.FC<InputProps> = ({
         value={value}
         onChange={onChange}
         name={name}
+        required={required}
         placeholder={placeholder}
         disabled={disabled}
+        maxLength={maxLength}
+        onPaste={onPaste}
+        ref={ref}
         checked={checked}
         id={id}
         className="input w-full border-none focus:outline-none py-1"
