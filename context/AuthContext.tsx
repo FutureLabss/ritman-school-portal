@@ -168,6 +168,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   // Login User
   const login = async (credentials: LoginFormDataType) => {
+    setLoading(true);
+    setError(null);
     try {
       const response = await api.post("/auth/login", credentials);
       const { token, fullname, roles } = response.data.data;
