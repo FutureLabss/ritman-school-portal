@@ -19,6 +19,7 @@ const CreatePassword = () => {
   });
 
   useEffect(() => {
+    // fixing prerendering issue
     const userData = JSON.parse(localStorage.getItem("userReg") || "{}");
     setFormData((prevData) => ({
       ...prevData,
