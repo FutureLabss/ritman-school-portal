@@ -2,7 +2,7 @@
 import Image from "next/image";
 import Input from "@/components/Input";
 import Button from "@/components/Button";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { useMutation } from "react-query";
 import { useAuth } from "@/context/AuthContext";
 import { ResendEmailDataType, verificationCodeDataType } from "@/utils/types";
@@ -77,15 +77,18 @@ const VerifyEmail = () => {
     throw new Error("Resend email function is not available");
   });
 
-  const handleVerification = (data: verificationCodeDataType) => {
-    const verificationCodeStr = data.code || verificationCode.join("");
-    mutation.mutate(
-      { code: verificationCodeStr },
-      {
-        onSuccess: (): void => {},
-      }
-    );
-  };
+  const handleVerification = useCallback(
+    (data: verificationCodeDataType) => {
+      const verificationCodeStr = data.code || verificationCode.join("");
+      mutation.mutate(
+        { code: verificationCodeStr },
+        {
+          onSuccess: (): void => {},
+        }
+      );
+    },
+    [verificationCode, mutation]
+  );
 
   const handleResendEmail = (data: ResendEmailDataType) => {
     setVerificationCode(["", "", "", "", "", ""]);
@@ -100,7 +103,7 @@ const VerifyEmail = () => {
     if (verificationCode.join("").length === 6) {
       handleVerification({ code: verificationCode.join("") });
     }
-  }, [verificationCode]);
+  }, [verificationCode, handleVerification]);
 
   useEffect(() => {
     if (timer > 0) {

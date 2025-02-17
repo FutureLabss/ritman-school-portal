@@ -53,8 +53,6 @@ const CreatePassword = () => {
     mutation.mutate(formData);
   };
 
-  console.log(formData, "form");
-
   return (
     <div className="flex justify-center min-h-screen bg-white">
       <div className="w-full max-w-4xl p-8 rounded-lg mt-5 lg:mt-20">

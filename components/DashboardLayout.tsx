@@ -43,7 +43,7 @@ const DashboardLayout = ({ children }: { children: ReactNode }) => {
     if (!loading && !user) {
       router.push("/auth/login");
     }
-  }, [user, loading]);
+  }, [user, loading, router]);
 
   useEffect(() => {
     const getUserdata = JSON.parse(localStorage.getItem("user") || "{}");
