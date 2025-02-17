@@ -5,7 +5,7 @@ import Button from "@/components/Button";
 import { useState, useEffect, useRef } from "react";
 import { useMutation } from "react-query";
 import { useAuth } from "@/context/AuthContext";
-import { ResendEmailDataType } from "@/utils/types";
+import { ResendEmailDataType, verificationCodeDataType } from "@/utils/types";
 
 const VerifyEmail = () => {
   const authContext = useAuth();
@@ -23,8 +23,13 @@ const VerifyEmail = () => {
   ]);
   const [timer, setTimer] = useState<number>(0);
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
-  const userData = JSON.parse(localStorage.getItem("userReg") || "{}");
-  const email: string = userData.email || "";
+  const [email, setEmail] = useState<string>("");
+
+  useEffect(() => {
+    const userData = JSON.parse(localStorage.getItem("userReg") || "{}");
+    setEmail(userData.email || "");
+  }, []);
+
   const maskedEmail = email.replace(/(.{2})(.*)(?=@)/, (gp1, gp2, gp3) => {
     return gp2 + "*".repeat(gp3.length - 4) + gp3.slice(-4);
   });
@@ -54,11 +59,11 @@ const VerifyEmail = () => {
           input.value = newCode[index];
         }
       });
-      handleVerification(newCode.join(""));
+      handleVerification({ code: newCode.join("") });
     }
   };
 
-  const mutation = useMutation((code: string) => {
+  const mutation = useMutation((code: verificationCodeDataType) => {
     if (verifyEmail) {
       return verifyEmail(code);
     }
@@ -72,11 +77,14 @@ const VerifyEmail = () => {
     throw new Error("Resend email function is not available");
   });
 
-  const handleVerification = (code?: string) => {
-    const verificationCodeStr = code || verificationCode.join("");
-    mutation.mutate(verificationCodeStr, {
-      onSuccess: (): void => {},
-    });
+  const handleVerification = (data: verificationCodeDataType) => {
+    const verificationCodeStr = data.code || verificationCode.join("");
+    mutation.mutate(
+      { code: verificationCodeStr },
+      {
+        onSuccess: (): void => {},
+      }
+    );
   };
 
   const handleResendEmail = (data: ResendEmailDataType) => {
@@ -90,7 +98,7 @@ const VerifyEmail = () => {
 
   useEffect(() => {
     if (verificationCode.join("").length === 6) {
-      handleVerification();
+      handleVerification({ code: verificationCode.join("") });
     }
   }, [verificationCode]);
 
@@ -157,7 +165,9 @@ const VerifyEmail = () => {
             <Button
               className="px-8 py-3 bg-primary min-w-[100%] lg:min-w-[30%] text-white rounded-full hover:bg-[#0F1739] transition-all"
               label={mutation.isLoading ? "Verifying..." : "Verify"}
-              onClick={() => handleVerification()}
+              onClick={() =>
+                handleVerification({ code: verificationCode.join("") })
+              }
               disabled={
                 mutation.isLoading || verificationCode.join("").length < 6
               }

@@ -7,6 +7,7 @@ import { useState } from "react";
 import { useMutation } from "react-query";
 import { useAuth } from "@/context/AuthContext";
 import { RegisterFormDataType } from "@/utils/types";
+import Link from "next/link";
 
 const RegistrationForm = () => {
   const authContext = useAuth();
@@ -161,6 +162,13 @@ const RegistrationForm = () => {
                 className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
               />
             </div>
+          </div>
+
+          <div className="text-[0.8rem] w-full flex gap-2">
+            <span>Already have an account?</span>
+            <Link href="/auth/login">
+              <span className="text-secondary">Login</span>
+            </Link>
           </div>
 
           {/* Submit Button */}

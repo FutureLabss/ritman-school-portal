@@ -8,6 +8,7 @@ interface RegisterFormDataType {
 }
 
 interface CreatePasswordFormDataType {
+  first_name: string;
   email: string;
   password: string;
   confirm_password: string;
@@ -17,9 +18,19 @@ interface ResendEmailDataType {
   email: string;
 }
 
+interface verificationCodeDataType {
+  code: string;
+}
+
 interface LoginFormDataType {
   email: string;
   password: string;
+}
+
+interface UserDataTypes {
+  fullname: string;
+  roles: { id: number; name: string }[];
+  token: string;
 }
 
 export type {
@@ -27,4 +38,6 @@ export type {
   CreatePasswordFormDataType,
   ResendEmailDataType,
   LoginFormDataType,
+  verificationCodeDataType,
+  UserDataTypes,
 };

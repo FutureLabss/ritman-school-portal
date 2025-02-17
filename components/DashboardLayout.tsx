@@ -9,12 +9,14 @@ import { FaBars, FaTimes } from "react-icons/fa";
 import { FaRegBell } from "react-icons/fa";
 import { MdOutlineKeyboardArrowRight } from "react-icons/md";
 import Image from "next/image";
+import { UserDataTypes } from "@/utils/types";
 
 const DashboardLayout = ({ children }: { children: ReactNode }) => {
   const router = useRouter();
   const pathname = usePathname();
   const [activeNav, setActiveNav] = useState("");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [getUserData, setGetUserData] = useState<UserDataTypes>();
   const authContext = useAuth();
   const user = authContext?.user;
   const loading = authContext?.loading;
@@ -42,6 +44,11 @@ const DashboardLayout = ({ children }: { children: ReactNode }) => {
       router.push("/auth/login");
     }
   }, [user, loading]);
+
+  useEffect(() => {
+    const getUserdata = JSON.parse(localStorage.getItem("user") || "{}");
+    setGetUserData(getUserdata);
+  }, []);
 
   if (loading) return <p>Loading...</p>;
 
@@ -80,7 +87,9 @@ const DashboardLayout = ({ children }: { children: ReactNode }) => {
             </div>
             <div>
               <p className="text-sm">Student ID</p>
-              <p className="text-sm font-semibold">23456745</p>
+              <p className="text-sm font-semibold">
+                {getUserData ? getUserData.roles[0]?.id : "---"}
+              </p>
               <p className="text-sm">Level</p>
             </div>
           </section>
@@ -123,15 +132,15 @@ const DashboardLayout = ({ children }: { children: ReactNode }) => {
                 <p>-----</p>
               </div>
               <div className="border-l flex-1 border-black text-center">
-                <p className="font-bold">Programme type</p>
+                <p className="font-bold">Faculty</p>
                 <p>-----</p>
               </div>
               <div className="border-l flex-1 border-black text-center">
-                <p className="font-bold">Programme type</p>
+                <p className="font-bold">Department</p>
                 <p>-----</p>
               </div>
               <div className="border-l flex-1 border-black text-center">
-                <p className="font-bold">Status</p>
+                <p className="font-bold">Admission Status</p>
                 <p>-----</p>
               </div>
             </div>
@@ -148,7 +157,7 @@ const DashboardLayout = ({ children }: { children: ReactNode }) => {
                   height={50}
                 />
               </span>
-              <span>John Big man</span>
+              <span>{getUserData ? getUserData.fullname : "---"}</span>
               <span>
                 <MdOutlineKeyboardArrowRight />
               </span>

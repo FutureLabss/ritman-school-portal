@@ -15,6 +15,8 @@ interface InputProps {
   maxLength?: number;
   onPaste?: (e: React.ClipboardEvent<HTMLInputElement>) => void;
   ref?: React.Ref<HTMLInputElement>;
+  checked?: boolean;
+  id?: string;
 }
 
 const Input: React.FC<InputProps> = ({
@@ -30,6 +32,8 @@ const Input: React.FC<InputProps> = ({
   maxLength,
   onPaste,
   ref,
+  checked,
+  id = "",
 }) => {
   const [showPassword, setShowPassword] = useState(false);
 
@@ -50,6 +54,8 @@ const Input: React.FC<InputProps> = ({
         maxLength={maxLength}
         onPaste={onPaste}
         ref={ref}
+        checked={checked}
+        id={id}
         className="input w-full border-none focus:outline-none py-1"
       />
       {type === "password" && (

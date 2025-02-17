@@ -2,7 +2,7 @@
 import Image from "next/image";
 import Input from "@/components/Input";
 import Button from "@/components/Button";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useMutation } from "react-query";
 import { CreatePasswordFormDataType } from "@/utils/types";
 import { useAuth } from "@/context/AuthContext";
@@ -11,15 +11,21 @@ const CreatePassword = () => {
   const createPassword = useAuth()?.createPassword;
   const error = useAuth()?.error;
   const [formError, setFormError] = useState<string | null>(null);
-  const userData = JSON.parse(localStorage.getItem("userReg") || "{}");
-  const firstN = userData.first_name || "";
-  const email = userData.email || "";
-  const [formData, setFormData] = useState({
-    first_name: firstN,
-    email: email,
+  const [formData, setFormData] = useState<CreatePasswordFormDataType>({
+    first_name: "",
+    email: "",
     password: "",
     confirm_password: "",
   });
+
+  useEffect(() => {
+    const userData = JSON.parse(localStorage.getItem("userReg") || "{}");
+    setFormData((prevData) => ({
+      ...prevData,
+      first_name: userData.first_name || "",
+      email: userData.email || "",
+    }));
+  }, []);
 
   const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -46,6 +52,8 @@ const CreatePassword = () => {
     setFormError(null);
     mutation.mutate(formData);
   };
+
+  console.log(formData, "form");
 
   return (
     <div className="flex justify-center min-h-screen bg-white">

@@ -6,6 +6,7 @@ import React, { useState } from "react";
 import { useMutation } from "react-query";
 import { useAuth } from "@/context/AuthContext";
 import { LoginFormDataType } from "@/utils/types";
+import Link from "next/link";
 
 const Login = () => {
   const login = useAuth()?.login;
@@ -84,10 +85,16 @@ const Login = () => {
           <div className="flex justify-start">
             <Button
               className="px-8 py-3 bg-primary min-w-[100%] lg:min-w-[30%] text-white rounded-full hover:bg-[#0F1739] transition-all"
-              label="Proceed"
+              label={mutation.isLoading ? "Logging in..." : "Login"}
               onClick={handleSubmit}
               type="submit"
             />
+          </div>
+          <div className="text-[0.8rem] w-full flex gap-2 items-center justify-center">
+            <span>Don&apos;t have an account?</span>
+            <Link href="/auth/register">
+              <span className="text-primary">Register</span>
+            </Link>
           </div>
           {formError && <p className="text-red-500">{formError}</p>}
           {error && <p className="text-red-500">{error}</p>}
