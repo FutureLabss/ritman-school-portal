@@ -121,7 +121,9 @@ const CreatePassword = () => {
 
           <div className="flex justify-start mt-4">
             <Button
-              className="px-8 py-3 bg-primary min-w-[100%] lg:min-w-[30%] text-white rounded-full hover:bg-[#0F1739] transition-all"
+              className={`px-8 py-3 ${
+                mutation.isLoading ? "bg-[#000345]/50" : "bg-primary"
+              }  min-w-[100%] lg:min-w-[30%] text-white rounded-full transition-all`}
               label={mutation.isLoading ? "Creating..." : "Create Password"}
               onClick={handleSubmit}
               type="submit"
