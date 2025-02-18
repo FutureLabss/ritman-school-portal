@@ -40,7 +40,7 @@ const marital = [
   },
   {
     value: "Divorced",
-    label: "Divorced",
+    label: "Divorce",
   },
 ];
 
