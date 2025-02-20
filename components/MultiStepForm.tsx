@@ -1,43 +1,100 @@
 "use client";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import PersonalDetails from "./steps/PersonalDetails";
 import Education from "./steps/Education";
 import Identification from "./steps/Identification";
 import Declaration from "./steps/Declaration";
 import Button from "./Button";
 import Image from "next/image";
+import Modal from "./Modal"; // Import Modal
+import { useMutation } from "react-query";
+import { FormDataType } from "@/utils/types";
+import { useFormContext } from "../context/FormContext";
 
 const steps = [
-  "Personal Details",
-  "Education",
-  "Identification",
-  "Declaration",
+  { label: "Personal Details", component: PersonalDetails },
+  { label: "Education", component: Education },
+  { label: "Identification", component: Identification },
+  { label: "Declaration", component: Declaration },
 ];
 
 export default function MultiStepForm() {
+  const formContext = useFormContext();
+  const studentAplication = formContext?.submitStudentApplication;
+
   const [currentStep, setCurrentStep] = useState(0);
+  const [formErrors, setFormErrors] = useState<string[]>([]);
+  const [isModalOpen, setIsModalOpen] = useState(false); // State for modal
+  const stepRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const { formData } = useFormContext();
+
+  const validateStep = () => {
+    const currentComponent = stepRefs.current[currentStep];
+    if (currentComponent) {
+      const inputs = currentComponent.querySelectorAll("input[required]");
+      const errors: string[] = [];
+      inputs.forEach((input) => {
+        if (!(input as HTMLInputElement).value) {
+          errors.push(`${(input as HTMLInputElement).name} is required`);
+        }
+      });
+      setFormErrors(errors);
+      return errors.length === 0;
+    }
+    return true;
+  };
 
   const handleNext = () => {
-    if (currentStep < steps.length - 1) setCurrentStep(currentStep + 1);
+    if (validateStep() && currentStep < steps.length - 1) {
+      setCurrentStep(currentStep + 1);
+    }
   };
 
   const handlePrevious = () => {
     if (currentStep > 0) setCurrentStep(currentStep - 1);
   };
 
+  const handleSubmit = () => {
+    if (validateStep()) {
+      setIsModalOpen(true); // Open the confirmation modal
+    }
+  };
+
+  const mutation = useMutation((data: FormDataType) => {
+    if (studentAplication) {
+      return studentAplication(data);
+    }
+    throw new Error("student application function is not available");
+  });
+
+  const confirmSubmission = () => {
+    const applicantData = {
+      title: formData.applicant.title,
+      marital_status: formData.applicant.marital_status,
+      phone_number: formData.applicant.phone_number,
+      gender: formData.applicant.gender,
+      permanent_resident: formData.applicant.permanent_resident,
+    };
+    const formattedData = { ...formData, applicant: applicantData };
+
+    mutation.mutate(formattedData);
+  };
+
+  const CurrentComponent = steps[currentStep].component;
+
   return (
     <div className="flex">
       {/* Sidebar Tabs */}
-      <div className="flex flex-col w-1/4 items-center">
+      <div className="flex flex-col lg:w-1/4 items-center">
         <Image
           src="/ritmanLogo.jpg"
           alt="Logo"
           width={124}
           height={80}
-          className="py-6"
+          className="py-6 hidden lg:block"
         />
-        <div className=" bg-white flex items-center justify-center py-20">
-          <ul className="">
+        <div className="bg-white hidden lg:block flex items-center justify-center py-20">
+          <ul>
             {steps.map((step, index) => (
               <li
                 key={index}
@@ -45,18 +102,23 @@ export default function MultiStepForm() {
                   currentStep === index
                     ? "text-blue-500 font-bold"
                     : "text-gray-400"
+                } ${
+                  formErrors.length > 0 && currentStep !== index
+                    ? "pointer-events-none"
+                    : ""
                 }`}
                 onClick={() => setCurrentStep(index)}
               >
-                {step}
+                {step.label}
               </li>
             ))}
           </ul>
         </div>
       </div>
 
-      <div className="w-3/4 bg-white flex flex-col max-w-4xl py-8 px-6">
-        <div className="flex justify-between gap-8 ">
+      {/* Main Form Content */}
+      <div className="lg:w-3/4 bg-white flex flex-col max-w-4xl py-8 px-6">
+        <div className="flex justify-between gap-8">
           <div className="max-w-[36.4375rem] space-y-6">
             <h2 className="text-3xl font-medium text-primary">
               Students Admission Form
@@ -69,19 +131,30 @@ export default function MultiStepForm() {
             </p>
           </div>
           <div>
-            <div className=" w-10 h-10 border border-orange-500 text-primary flex items-center justify-center rounded-full">
+            <div className="w-10 h-10 border border-orange-500 text-primary flex items-center justify-center rounded-full">
               {currentStep + 1}
             </div>
           </div>
         </div>
 
-        <div className="flex-grow ">
-          {currentStep === 0 && <PersonalDetails />}
-          {currentStep === 1 && <Education />}
-          {currentStep === 2 && <Identification />}
-          {currentStep === 3 && <Declaration />}
+        <div
+          className="flex-grow"
+          ref={(el) => {
+            stepRefs.current[currentStep] = el;
+          }}
+        >
+          <CurrentComponent />
         </div>
 
+        {formErrors.length > 0 && (
+          <div className="text-red-500 text-sm mt-2">
+            {formErrors.map((error, index) => (
+              <p key={index}>{error}</p>
+            ))}
+          </div>
+        )}
+
+        {/* Navigation Buttons */}
         <div
           className={`flex text-[1.375rem] ${
             currentStep > 0 ? "justify-between" : "justify-end"
@@ -89,7 +162,7 @@ export default function MultiStepForm() {
         >
           {currentStep > 0 && (
             <Button
-              className="max-w-[9.375rem] py-2 md:max-w-[16rem] w-full md:py-4 border border-primary text-primary rounded-full"
+              className="max-w-[9.375rem] py-2 text-sm px-8 border border-primary text-primary rounded-full"
               onClick={handlePrevious}
               disabled={currentStep === 0}
               label="Previous"
@@ -97,13 +170,21 @@ export default function MultiStepForm() {
           )}
 
           <Button
-            className={`max-w-[9.375rem] py-2  text-center md:max-w-[16rem] w-full md:py-4 bg-primary text-white rounded-full `}
-            onClick={handleNext}
-            disabled={currentStep === steps.length - 1}
-            label="Next"
+            className="max-w-[9.375rem] py-2 text-sm text-center px-8 bg-primary text-white rounded-full"
+            onClick={
+              currentStep === steps.length - 1 ? handleSubmit : handleNext
+            }
+            label={currentStep === steps.length - 1 ? "Submit" : "Next"}
           />
         </div>
       </div>
+
+      {/* Confirmation Modal */}
+      <Modal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onConfirm={confirmSubmission}
+      />
     </div>
   );
 }

@@ -1,9 +1,11 @@
 import { useState } from "react";
 import Input from "../Input";
-import Button from "../Button";
-import Image from "next/image";
+// import Button from "../Button";
+// import Image from "next/image";
+import { useFormContext } from "../../context/FormContext"; // Import the context
 
 export default function Declaration() {
+  const { formData } = useFormContext(); // Use the context
   const [declaration, setDeclaration] = useState({
     declaration: "",
   });
@@ -12,6 +14,20 @@ export default function Declaration() {
     const { name, value } = e.target;
     setDeclaration({ ...declaration, [name]: value });
   };
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const applicantData = {
+      title: formData.applicant.title,
+      marital_status: formData.applicant.marital_status,
+      phone_number: formData.applicant.phone_number,
+      gender: formData.applicant.gender,
+      permanent_resident: formData.applicant.permanent_resident,
+    };
+    const formattedData = { ...formData, applicant: applicantData };
+    console.log("Form Data:", formattedData);
+  };
+
   return (
     <div className="py-12 flex flex-col gap-11 max-w-xl">
       <h2 className="text-2xl font-semibold">Application Declaration</h2>
@@ -25,7 +41,8 @@ export default function Declaration() {
         admission or enrollment made on the basis of incorrect or incomplete
         information.
       </p>
-      <form action="" className="flex flex-col gap-12">
+
+      <form onSubmit={handleSubmit} className="flex flex-col gap-12">
         <div className="flex gap-12">
           <label className="text-[#555] text-sm font-semibold">
             {" "}
@@ -47,8 +64,10 @@ export default function Declaration() {
             </label>
           </div>
         </div>
-        <div className="flex gap-4 pt-6 text-[#666666] flex-col sm:flex-row sm:self-center">
+
+        {/* <div className="flex gap-4 pt-6 text-[#666666] flex-col sm:flex-row sm:self-center">
           <Button
+            type="submit" // Change to submit button
             label="Submit Form"
             className="border-[#ccc] py-2 px-4 text-sm text-center border rounded-md"
           />
@@ -63,7 +82,7 @@ export default function Declaration() {
               className="border-[#ccc] text-sm text-center"
             />
           </div>
-        </div>
+        </div> */}
       </form>
     </div>
   );

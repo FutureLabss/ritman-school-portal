@@ -7,7 +7,6 @@ import { useState } from "react";
 import { useMutation } from "react-query";
 import { useAuth } from "@/context/AuthContext";
 import { RegisterFormDataType } from "@/utils/types";
-import Link from "next/link";
 
 const RegistrationForm = () => {
   const authContext = useAuth();
@@ -164,19 +163,10 @@ const RegistrationForm = () => {
             </div>
           </div>
 
-          <div className="text-[0.8rem] w-full flex gap-2">
-            <span>Already have an account?</span>
-            <Link href="/auth/login">
-              <span className="text-secondary">Login</span>
-            </Link>
-          </div>
-
           {/* Submit Button */}
           <div className="flex justify-start mt-4">
             <Button
-              className={`px-8 py-3 ${
-                mutation.isLoading ? "bg-[#000345]/50" : "bg-primary"
-              }  min-w-[100%] lg:min-w-[30%] text-white rounded-full transition-all`}
+              className="px-8 py-3 bg-primary min-w-[100%] lg:min-w-[30%] text-white rounded-full hover:bg-[#0F1739] transition-all"
               label={mutation.isLoading ? "Registering..." : "Proceed"}
               onClick={handleSubmit}
               type="submit"
