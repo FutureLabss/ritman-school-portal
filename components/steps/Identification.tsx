@@ -38,10 +38,7 @@ export default function Identification() {
 
   return (
     <div className="py-20">
-      <form
-        onSubmit={handleSubmit}
-        className="flex flex-col space-y-6 sm:space-y-12"
-      >
+      <form onSubmit={handleSubmit} className="gap-6 sm:grid-cols-2">
         <div className="lg:flex space-x-8">
           <label htmlFor="" className="mb-2 w-25 text-sm font-semibold">
             Nationality <span className="text-secondary">*</span>
@@ -58,7 +55,7 @@ export default function Identification() {
           </div>
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-col-2 gap-4 sm:flex-row sm:items-center">
+        <div className="grid grid-cols-1 mt-4 lg:grid-col-2 gap-4 sm:flex-row sm:items-center">
           <div className="space-y-2">
             <span className="text-sm font-semibold">Type of ID Document</span>
             <Dropdown
@@ -81,7 +78,7 @@ export default function Identification() {
           </div>
         </div>
 
-        <section className="grid grid-cols-2 gap-4">
+        <section className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           <div className="gap-4">
             <label htmlFor="" className="mb-2 text-sm font-semibold">
               Date of Issue

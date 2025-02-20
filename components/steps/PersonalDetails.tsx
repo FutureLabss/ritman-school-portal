@@ -189,6 +189,32 @@ export default function PersonalDetails() {
             <label className="text-sm" htmlFor="male">
               Male
             </label>
+            {/* <div> */}
+            {/* <div className="flex gap-1 items-center text-[#555]">
+              <Input
+                type="radio"
+                name="gender"
+                value="male"
+                id="male"
+                onChange={handleChange}
+                checked={formData.applicant.gender === "male"}
+              />
+              <label className="text-sm " htmlFor="male">
+                Male
+              </label>
+            </div> */}
+            {/* <div className="flex items-center gap-1 text-[#555]">
+              <Input
+                type="radio"
+                name="gender"
+                value="female"
+                id="female"
+                onChange={handleChange}
+              />
+              <label className="text-sm" htmlFor="female">
+                Female
+              </label>
+            </div> */}
           </div>
           <div className="flex items-center gap-1 text-[#555]">
             <Input
@@ -203,7 +229,17 @@ export default function PersonalDetails() {
             <label className="text-sm" htmlFor="female">
               Female
             </label>
+
+            {/* <Dropdown
+              options={marital}
+              name="maritalStatus"
+              value={formData.applicant.marital_status}
+              onChange={handleChange}
+              className="border py-1 rounded-md border-[#ccc] focus:outline-none flex-1"
+            /> */}
           </div>
+
+          {/* </div> */}
         </div>
 
         {/* Marital Status and Date of Birth */}

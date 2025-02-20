@@ -238,6 +238,7 @@ export default function Education() {
             </section>
           </div>
         </div>
+        {/* </div> */}
       </form>
     </div>
   );
