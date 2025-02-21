@@ -15,15 +15,14 @@ export default function StudentApplication() {
     if (!loading) {
       const storedUser = localStorage.getItem("user");
       if (!user && !storedUser) {
-        router.push("/auth/login");
+        router.replace("/auth/login");
       } else {
         setIsUserLoaded(true);
       }
     }
   }, [loading, user, router]);
 
-  if (loading || !isUserLoaded) return <p>Loading...</p>;
-  if (!user) return null; // Prevent rendering the form if the user is not available
+  if (loading || !isUserLoaded) return null; // Prevent rendering the form if the user is not available
 
   return <MultiStepForm />;
 }
