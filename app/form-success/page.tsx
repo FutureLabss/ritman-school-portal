@@ -1,27 +1,28 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import Image from "next/image";
+import AnimatedImage from "@/components/AnimatedImage";
 
 export default function FormSuccess() {
   const router = useRouter();
 
   return (
-    <section className="bg-gray-100 min-h-screen flex items-center justify-center">
-      <div className="flex flex-col items-center justify-center  max-w-lg mx-auto">
-        <div className="bg-white p-8 rounded-lg shadow-md max-w-md w-full text-center">
-          {/* University Logo */}
-          <Image src="/logo.png" alt="University Logo" width={48} height={48} />
+    <section className="bg-gray-white min-h-screen flex flex-col justify-center items-center">
+      <div className="flex flex-col  max-w-lg mx-auto">
+        <div className="flex justify-start mb-10">
+          {/* <Image src="/ritmanLogo.jpg" alt="Logo" width={80} height={80} /> */}
         </div>
-
         {/* Success Message */}
-        <h2 className="text-2xl font-bold text-indigo-900 mb-4">
+        <h2 className="text-[2rem] text-center font-bold text-primary mb-4">
           Form submitted successfully
         </h2>
 
         {/* Success Icon */}
         <div className="flex justify-center mb-4">
-          <svg
+          {/* <Image src="/copy.png" alt="Success Icon" width={100} height={100} /> */}
+          <AnimatedImage />
+
+          {/* <svg
             xmlns="http://www.w3.org/2000/svg"
             className="h-16 w-16 text-green-500"
             fill="none"
@@ -34,25 +35,25 @@ export default function FormSuccess() {
               strokeLinejoin="round"
               d="M5 13l4 4L19 7"
             />
-          </svg>
+          </svg> */}
         </div>
 
         {/* Confirmation Text */}
-        <p className="text-gray-600 mb-6">
+        <p className="mb-6 text-[0.9rem] text-center">
           Your form has been submitted successfully
         </p>
 
         {/* Buttons */}
         <button
-          className="w-full bg-indigo-900 text-white py-2 rounded-md mb-2 hover:bg-indigo-800 transition"
-          onClick={() => router.push("/payment")}
+          className="w-full bg-primary text-white py-2 rounded-md mb-2 hover:bg-indigo-800 transition"
+          onClick={() => alert("Coming soon...")}
         >
           Pay Application Fee
         </button>
 
         <button
           className="w-full border border-indigo-900 text-indigo-900 py-2 rounded-md hover:bg-indigo-50 transition"
-          onClick={() => router.push("/dashboard")}
+          onClick={() => router.push("/student/dashboard")}
         >
           Proceed to Dashboard
         </button>

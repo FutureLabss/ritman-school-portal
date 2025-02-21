@@ -56,9 +56,7 @@ const DashboardLayout = ({ children }: { children: ReactNode }) => {
     }
   }, [loading, user, router]);
 
-  if (loading || !isUserLoaded) return <p>Loading...</p>;
-  if (!user) return null;
-
+  if (loading || !isUserLoaded) return null;
   return (
     <div className="flex min-h-screen bg-gray-100">
       {/* Sidebar */}
