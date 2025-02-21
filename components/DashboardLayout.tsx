@@ -16,6 +16,7 @@ const DashboardLayout = ({ children }: { children: ReactNode }) => {
   const pathname = usePathname();
   const [activeNav, setActiveNav] = useState("");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isUserLoaded, setIsUserLoaded] = useState(false);
   const [getUserData, setGetUserData] = useState<UserDataTypes>();
   const authContext = useAuth();
   const user = authContext?.user;
@@ -40,18 +41,22 @@ const DashboardLayout = ({ children }: { children: ReactNode }) => {
   };
 
   useEffect(() => {
-    if (!loading && !user) {
-      router.push("/auth/login");
-    }
-  }, [user, loading, router]);
-
-  useEffect(() => {
     const getUserdata = JSON.parse(localStorage.getItem("user") || "{}");
     setGetUserData(getUserdata);
   }, []);
 
-  if (loading) return <p>Loading...</p>;
+  useEffect(() => {
+    if (!loading) {
+      const storedUser = localStorage.getItem("user");
+      if (!user && !storedUser) {
+        router.push("/auth/login");
+      } else {
+        setIsUserLoaded(true);
+      }
+    }
+  }, [loading, user, router]);
 
+  if (loading || !isUserLoaded) return null;
   return (
     <div className="flex min-h-screen bg-gray-100">
       {/* Sidebar */}

@@ -1,15 +1,18 @@
 "use client";
 import Image from "next/image";
 import Input from "@/components/Input";
-import Dropdown from "@/components/DropDown";
 import Button from "@/components/Button";
 import { useState } from "react";
 import { useMutation } from "react-query";
 import { useAuth } from "@/context/AuthContext";
 import { RegisterFormDataType } from "@/utils/types";
-import Link from "next/link";
+// import Link from "next/link";
+import { useParams } from "next/navigation";
 
 const RegistrationForm = () => {
+  const params = useParams(); 
+  const course = params.course as string;
+
   const authContext = useAuth();
   const register = authContext?.register;
   const error = authContext?.error;
@@ -19,7 +22,7 @@ const RegistrationForm = () => {
     last_name: "",
     email: "",
     dob: "",
-    choosen_program: "",
+    choosen_program: course || "",
   });
   const [formError, setFormError] = useState<string | null>(null);
 
@@ -149,34 +152,22 @@ const RegistrationForm = () => {
               <label className="block text-sm font-medium text-gray-700">
                 Chosen Program
               </label>
-              <Dropdown
+              <Input
                 name="choosen_program"
                 required
-                options={[
-                  { value: "", label: "" },
-                  { value: "chemistry", label: "chemistry" },
-                  { value: "program3", label: "Program 3" },
-                ]}
                 value={formData.choosen_program}
                 onChange={handleFieldChange}
-                className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                type="text"
+                readOnly={true}
+                className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary cursor-not-allowed bg-gray-100"
               />
             </div>
-          </div>
-
-          <div className="text-[0.8rem] w-full flex gap-2">
-            <span>Already have an account?</span>
-            <Link href="/auth/login">
-              <span className="text-secondary">Login</span>
-            </Link>
           </div>
 
           {/* Submit Button */}
           <div className="flex justify-start mt-4">
             <Button
-              className={`px-8 py-3 ${
-                mutation.isLoading ? "bg-[#000345]/50" : "bg-primary"
-              }  min-w-[100%] lg:min-w-[30%] text-white rounded-full transition-all`}
+              className="px-8 py-3 bg-primary min-w-[100%] lg:min-w-[30%] text-white rounded-full hover:bg-[#0F1739] transition-all"
               label={mutation.isLoading ? "Registering..." : "Proceed"}
               onClick={handleSubmit}
               type="submit"

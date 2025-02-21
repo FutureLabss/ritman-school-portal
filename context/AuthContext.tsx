@@ -53,7 +53,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     localStorage.setItem("userReg", JSON.stringify(data));
     try {
       const response = await api.post("/auth/register", data);
-      if (response.status === 200) {
+      if (response.status === 201) {
         router.push("/auth/verify");
       }
     } catch (error) {

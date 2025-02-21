@@ -1,174 +1,209 @@
 "use client";
-import { useState, ChangeEvent } from "react";
+import React, { useEffect, useState } from "react";
+import { ChangeEvent } from "react";
 import Dropdown from "../DropDown";
 import Input from "../Input";
+import { useFormContext } from "@/context/FormContext"; // Import the context
+import { UserDataTypes } from "@/utils/types";
 
 const prefix = [
+  { value: "", label: "" },
   { value: "Mr", label: "Mr" },
-  { value: "Ms", label: "Ms" },
+  { value: "Miss", label: "Miss" },
   { value: "Mrs", label: "Mrs" },
-];
-
-const country = [
-  {
-    value: "Nigeria",
-    label: "Nigeria",
-  },
-  {
-    value: "Ghana",
-    label: "Ghana",
-  },
-  {
-    value: "Cameroon",
-    label: "Cameroon",
-  },
-  {
-    value: "UK",
-    label: "UK",
-  },
 ];
 
 const marital = [
   { value: "", label: "" },
-  {
-    value: "Single",
-    label: "Single",
-  },
-  {
-    value: "Married",
-    label: "Married",
-  },
-  {
-    value: "Divorced",
-    label: "Divorce",
-  },
+  { value: "Single", label: "Single" },
+  { value: "Married", label: "Married" },
+  { value: "Divorced", label: "Divorce" },
+];
+
+const country = [
+  { value: "", label: "" },
+  { value: "Nigeria", label: "Nigeria" },
+  { value: "Ghana", label: "Ghana" },
+  { value: "Cameron", label: "Cameron" },
 ];
 
 export default function PersonalDetails() {
-  const [formDataOne, setFormDataOne] = useState({
-    prefix: "Mr",
-    firstName: "",
-    middleName: "",
-    lastName: "",
-    gender: "male",
-    maritalStatus: "",
-    dob: "",
-    address: "",
-    streetAddress: "",
-    country: "Nigeria",
-    city: "",
-    state: "",
-    phoneNumber: "",
-    email: "",
-    guardianTitle: "Mr",
-    guardianFirstName: "",
-    guardianMiddleName: "",
-    guardianLastName: "",
-    guardianAddress: "",
-    guardianStreetAddress: "",
-    guardianCity: "",
-    guardianState: "",
-    guardianCountry: "Nigeria",
-    guardianPhoneNumber: "",
-    postalCode: "",
-    isPermanentResident: "yes",
-  });
+  const { formData, updateFormData } = useFormContext(); // Use the context
+  const [storeUser, setStoreuser] = useState<UserDataTypes>(
+    {} as UserDataTypes
+  );
 
   const handleChange = (
     e: ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLSelectElement>
   ) => {
-    setFormDataOne({ ...formDataOne, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+
+    // Update the form data in the context
+    updateFormData({
+      applicant: {
+        ...formData.applicant,
+        [name]: value,
+      },
+    });
+  };
+
+  const handleGuardianChange = (
+    e: ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLSelectElement>
+  ) => {
+    const { name, value } = e.target;
+
+    // Update the guardian data in the context
+    updateFormData({
+      guardian: {
+        ...formData.guardian,
+        [name]: value,
+      },
+    });
+  };
+
+  const handleAddressChange = (
+    index: number,
+    e: ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLSelectElement>
+  ) => {
+    const { name, value } = e.target;
+    const updatedAddress = [...formData.address];
+    updatedAddress[index] = {
+      ...updatedAddress[index],
+      [name]: value,
+    };
+    updateFormData({
+      address: updatedAddress,
+    });
+  };
+
+  const handleRadioChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+
+    // Update the form data in the context
+    updateFormData({
+      applicant: {
+        ...formData.applicant,
+        [name]: value === "true",
+      },
+    });
   };
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log(formDataOne);
+    console.log(formData); // Log the form data from the context
   };
 
+  useEffect(() => {
+    const storedUser = localStorage.getItem("user")
+      ? JSON.parse(localStorage.getItem("user") as string)
+      : null;
+    if (storedUser) {
+      setStoreuser(storedUser);
+    }
+  }, []);
+
+  console.log(storeUser, "store");
+
   return (
-    <div className="max-w-4xl ">
-      <form onSubmit={handleSubmit} className="flex flex-col gap-10 py-12">
-        <div className="max-w-3xl w-full ">
+    <div className="">
+      <form onSubmit={handleSubmit} className="flex flex-col gap-8 py-12">
+        {/* Name Section */}
+        <div className="">
           <div className="font-semibold text-[1rem] my-1 text-[#555]">
             Name <span className="text-secondary">*</span>
           </div>
-          <div className="flex flex-col md:flex-row md:items-center gap-4 w-full">
+          <div className="lg:flex flex-col sm:flex-row sm:items-center gap-4 w-full">
             <div className="flex flex-col-reverse sm:flex-col">
               <Dropdown
-                name="prefix"
+                name="title"
                 options={prefix}
-                value={formDataOne.prefix}
+                value={formData.applicant.title}
                 onChange={handleChange}
-                className="border border-[#ccc] py-[4px] rounded-md w-fit font-semibold text-sm"
+                required
+                className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
               />
               <span className="text-sm font-semibold text-[#6f6f6f]">
-                prefix
+                Title
               </span>
             </div>
-            <div className="flex flex-col-reverse sm:flex-col w-full">
-              <Input
-                type="text"
-                name="firstName"
-                // placeholder="First Name"
-                className="border border-[#ccc] rounded-md "
-                value={formDataOne.firstName}
-                onChange={handleChange}
-              />
-              <span className="text-sm font-semibold text-[#6f6f6f]">
-                First Name
-              </span>
-            </div>
-
-            <div className="flex flex-col-reverse sm:flex-col w-full">
-              <Input
-                type="text"
-                name="middleName"
-                // placeholder="Middle Name"
-                className="border border-[#ccc] rounded-md "
-                value={formDataOne.middleName}
-                onChange={handleChange}
-              />
-              <span className="text-sm font-semibold text-[#6f6f6f]">
-                Middle Name
-              </span>
-            </div>
-
-            <div className="flex flex-col-reverse sm:flex-col w-full">
-              <Input
-                type="text"
-                name="lastName"
-                // placeholder="Last Name"
-                className="border border-[#ccc]  rounded-md"
-                value={formDataOne.lastName}
-                onChange={handleChange}
-              />
-              <span className="text-sm font-semibold text-[#6f6f6f]">
-                Last Name
-              </span>
-            </div>
+            <section className="grid grid-cols-1 lg:grid-cols-3 gap-3 w-full">
+              <div className="flex flex-col-reverse sm:flex-col">
+                <Input
+                  type="text"
+                  name="first_name"
+                  required
+                  disabled
+                  className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                  value={storeUser?.fullname || ""}
+                  // onChange={handleChange}
+                />
+                <span className="text-sm font-semibold text-[#6f6f6f]">
+                  Full Name
+                </span>
+              </div>
+              {/* <div className="flex flex-col-reverse sm:flex-col">
+                <Input
+                  type="text"
+                  name="middle_name"
+                  required
+                  className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                  value={formData.applicant.middle_name}
+                  onChange={handleChange}
+                />
+                <span className="text-sm font-semibold text-[#6f6f6f]">
+                  Middle Name
+                </span>
+              </div> */}
+              {/* <div className="flex flex-col-reverse sm:flex-col">
+                <Input
+                  type="text"
+                  name="last_name"
+                  required
+                  className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                  value={formData.applicant.last_name}
+                  onChange={handleChange}
+                />
+                <span className="text-sm font-semibold text-[#6f6f6f]">
+                  Last Name
+                </span>
+              </div> */}
+            </section>
           </div>
         </div>
-        {/* gender */}
-        <div className="my-4 flex flex-col md:flex-row max-w-3xl justify-between  gap-8 md:gap-4 ">
-          <div className="flex items-center gap-8 w-full">
-            <label className="text-[1rem] font-semibold text-[#555]">
-              Gender<span className="text-secondary">*</span>{" "}
+
+        {/* Gender Section */}
+        <div className="my-4 flex gap-4">
+          <label className="text-[1rem] font-semibold text-[#555]">
+            Gender<span className="text-secondary">*</span>
+          </label>
+          <div className="flex gap-1 items-center text-[#555]">
+            <Input
+              type="radio"
+              name="gender"
+              value="Male"
+              required
+              id="male"
+              onChange={handleChange}
+              checked={formData.applicant.gender === "Male"}
+            />
+            <label className="text-sm" htmlFor="male">
+              Male
             </label>
             {/* <div> */}
-            <div className="flex gap-1 items-center text-[#555]">
+            {/* <div className="flex gap-1 items-center text-[#555]">
               <Input
                 type="radio"
                 name="gender"
                 value="male"
                 id="male"
                 onChange={handleChange}
-                checked={formDataOne.gender === "male"}
+                checked={formData.applicant.gender === "male"}
               />
               <label className="text-sm " htmlFor="male">
                 Male
               </label>
-            </div>
-            <div className="flex items-center gap-1 text-[#555]">
+            </div> */}
+            {/* <div className="flex items-center gap-1 text-[#555]">
               <Input
                 type="radio"
                 name="gender"
@@ -179,353 +214,334 @@ export default function PersonalDetails() {
               <label className="text-sm" htmlFor="female">
                 Female
               </label>
-            </div>
+            </div> */}
           </div>
-          <div className=" w-full flex items-center  gap-10">
-            <label className="text-[1rem] font-semibold text-[#555]">
-              Marital Status<span className="text-secondary">*</span>
+          <div className="flex items-center gap-1 text-[#555]">
+            <Input
+              type="radio"
+              name="gender"
+              value="Female"
+              required
+              id="female"
+              onChange={handleChange}
+              checked={formData.applicant.gender === "Female"}
+            />
+            <label className="text-sm" htmlFor="female">
+              Female
             </label>
 
-            <Dropdown
+            {/* <Dropdown
               options={marital}
               name="maritalStatus"
-              value={formDataOne.maritalStatus}
+              value={formData.applicant.marital_status}
               onChange={handleChange}
               className="border py-1 rounded-md border-[#ccc] focus:outline-none flex-1"
-            />
+            /> */}
           </div>
 
           {/* </div> */}
         </div>
-        {/*   Marital Status */}
-        <div className=" flex items-center gap-8">
+
+        {/* Marital Status and Date of Birth */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <section>
+            <label className="text-[1rem] font-semibold text-[#555]">
+              Marital Status<span className="text-secondary">*</span>
+            </label>
+            <Dropdown
+              options={marital}
+              name="marital_status"
+              required
+              value={formData.applicant.marital_status}
+              onChange={handleChange}
+              className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+            />
+          </section>
+          <section>
+            <label className="text-[1rem] font-semibold text-[#555]">
+              Date of birth
+            </label>
+            <div>
+              <div className="">
+                <Input
+                  type="date"
+                  name="dob"
+                  required
+                  className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                  value={formData.applicant.dob || ""}
+                  onChange={handleChange}
+                />
+              </div>
+            </div>
+          </section>
+        </div>
+
+        {/* Phone Number Section */}
+        <div className="grid">
           <label className="text-[1rem] font-semibold text-[#555]">
-            Date of birth
+            Phone Number
           </label>
           <Input
-            type="date"
-            name="dob"
-            placeholder="Date of Birth"
-            className="border border-[#ccc] rounded-md max-w-[12.5rem] w-full"
-            value={formDataOne.dob}
+            type="text"
+            name="phone_number"
+            required
+            className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+            value={formData.applicant.phone_number}
             onChange={handleChange}
           />
         </div>
 
-        {/* Current Address */}
-
-        <div className="flex gap-4 flex-col md:flex-row  max-w-3xl  w-full">
-          <label className="text-[1rem] font-semibold text-[#555] w-40">
+        {/* Current Address Section */}
+        <div className="lg:flex gap-4 flex-col sm:flex-row sm:gap-8 max-w-3xl">
+          <label className="text-[1rem] font-semibold text-[#555]">
             Current Address <span className="text-secondary">*</span>
           </label>
-          <div className="flex flex-col gap-6  w-full">
-            <div className="flex gap-4 flex-col md:flex-row">
-              <div className="flex flex-1 flex-col-reverse md:flex-col w-full">
-                <Input
-                  type="text"
-                  name="address"
-                  className="border border-[#ccc] rounded-md"
-                  value={formDataOne.address}
-                  onChange={handleChange}
-                />
-                <span className="text-sm font-semibold text-[#6f6f6f]">
-                  {" "}
-                  Street Address
-                </span>
-              </div>
-
-              <div className="flex flex-col-reverse md:flex-col flex-1 w-full">
-                <Input
-                  type="text"
-                  name="streetAddress"
-                  className="border  rounded-md border-[#ccc] "
-                  value={formDataOne.streetAddress}
-                  onChange={handleChange}
-                />
-                <span className="text-sm font-semibold text-[#6f6f6f]">
-                  Street Address Line 2
-                </span>
-              </div>
+          <div className="">
+            <div className="flex flex-col-reverse sm:flex-col">
+              <Input
+                type="text"
+                name="street_address_line_1"
+                required
+                className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                value={formData.address[0]?.street_address_line_1 || ""}
+                onChange={(e) => handleAddressChange(0, e)}
+              />
+              <span className="text-sm font-semibold text-[#6f6f6f]">
+                Street Address
+              </span>
             </div>
-
-            <div className="flex flex-col md:flex-row gap-4">
-              <div className="w-full flex flex-col-reverse md:flex-col">
+            <section className="mt-4 grid lg:grid-cols-3 gap-4">
+              <div>
+                <label className="text-[1rem] font-semibold text-[#555]">
+                  City <span className="text-secondary">*</span>
+                </label>
                 <Input
                   type="text"
                   name="city"
-                  className="border  rounded-md border-[#ccc] w-full"
-                  value={formDataOne.state}
-                  onChange={handleChange}
+                  required
+                  className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                  value={formData.address[0]?.city || ""}
+                  onChange={(e) => handleAddressChange(0, e)}
                 />
-                <span className="text-sm font-semibold text-[#6f6f6f]">
-                  city
-                </span>
               </div>
-
-              <div className="w-full flex flex-col-reverse md:flex-col">
+              <div>
+                <label className="text-[1rem] font-semibold text-[#555]">
+                  State
+                </label>
                 <Input
                   type="text"
                   name="state"
-                  className="border  rounded-md border-[#ccc]  w-full"
-                  value={formDataOne.city}
-                  onChange={handleChange}
+                  required
+                  className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                  value={formData.address[0]?.state || ""}
+                  onChange={(e) => handleAddressChange(0, e)}
                 />
-                <span className="text-sm font-semibold text-[#6f6f6f] ">
-                  state
-                </span>
               </div>
-            </div>
-            <div className=" flex flex-col-reverse sm:flex-col md:w-1/2">
-              <Dropdown
-                name="country"
-                options={country}
-                value={formDataOne.country}
-                onChange={handleChange}
-                className="border p-[6px] rounded-md border-[#ccc] focus:outline-none"
-              />
-              <span className="text-sm font-semibold text-[#6f6f6f]">
-                country
-              </span>
-            </div>
+              <div>
+                <label className="text-[1rem] font-semibold text-[#555]">
+                  Country <span className="text-secondary">*</span>
+                </label>
+                <Dropdown
+                  options={country}
+                  name="country"
+                  required
+                  className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                  value={formData.address[0]?.country || ""}
+                  onChange={(e) => handleAddressChange(0, e)}
+                />
+              </div>
+            </section>
           </div>
         </div>
 
-        {/* Permanent Resident */}
-        {/* <div className="mt-4 grid grid-cols-1 sm:grid-cols-[160px_1fr] gap-y-4 gap-x-4  sm:gap-y-12"> */}
-        <div className="flex gap-8  w-1/2">
-          <label className="text-[1rem] font-semibold text-[#555] w-full">
-            Are you a permanent Resident
-            <span className="text-secondary">*</span>{" "}
+        {/* Permanent Resident Section */}
+        <div className="grid grid-cols-1 sm:grid-cols-[160px_1fr] gap-y-4 gap-x-4 sm:gap-y-12">
+          <label className="text-[1rem] font-semibold text-[#555]">
+            Are you a permanent Resident{" "}
+            <span className="text-secondary">*</span>
           </label>
-          <div className="flex items-center w-full">
+          <div className="flex items-center max-w-[5.625rem] w-full">
             <div className="flex gap-1 w-full">
               <Input
                 type="radio"
-                name="isPermanentResident"
-                value="yes"
-                id="yes"
-                onChange={handleChange}
-                checked={formDataOne.isPermanentResident === "yes"}
+                name="permanent_resident"
+                required
+                value="true"
+                onChange={handleRadioChange}
+                checked={formData.applicant.permanent_resident === true}
               />
               <label htmlFor="yes">Yes</label>
             </div>
             <div className="flex items-center gap-1">
               <Input
                 type="radio"
-                name="isPermanentResident"
-                value="no"
-                id="no"
-                onChange={handleChange}
+                name="permanent_resident"
+                required
+                value="false"
+                onChange={handleRadioChange}
+                checked={formData.applicant.permanent_resident === false}
               />
               <label htmlFor="no">No</label>
             </div>
           </div>
         </div>
 
-        <div className="flex items-center w-full gap-y-4 gap-x-8 flex-col md:flex-row max-w-3xl">
-          <div className="flex gap-3 md:gap- w-full flex-col md:flex-row flex-1">
-            <label className="text-[1rem] font-semibold text-[#555]">
-              Phone Number<span className="text-secondary">*</span>{" "}
-            </label>
-            <div className="flex flex-col gap-4 md:flex-row w-full ">
-              <div className="gap-1 flex flex-col-reverse sm:flex-col">
-                <Input
-                  type="text"
-                  name="code"
-                  value={"+234"}
-                  className="border border-[#ccc] rounded-md w-full max-w-[5.25rem] "
-                  onChange={handleChange}
+        {/* Guardian Section */}
+        <section className="">
+          <div className="mt-10">
+            <div className="font-semibold text-[1rem] my-1 text-[#555]">
+              Parent/ Guardian/ Sponsor Name{" "}
+              <span className="text-secondary">*</span>
+            </div>
+            <div className="lg:flex flex-col sm:flex-row sm:items-center gap-4 w-full">
+              <div className="flex flex-col-reverse sm:flex-col">
+                <Dropdown
+                  name="title"
+                  options={prefix}
+                  value={formData.guardian.title}
+                  onChange={handleGuardianChange}
+                  required
+                  className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
                 />
-                <label className="text-sm font-semibold text-[#6f6f6f]">
-                  Country Code
-                </label>
+                <span className="text-sm font-semibold text-[#6f6f6f]">
+                  Title
+                </span>
               </div>
-              <div className=" gap-1 flex flex-col-reverse md:flex-col w-full m-0">
-                <Input
-                  type="text"
-                  name="phoneNumber"
-                  className="border border-[#ccc] rounded-md w-full "
-                  value={formDataOne.phoneNumber}
-                  onChange={handleChange}
-                />
-                <label className="text-sm  font-semibold text-[#6f6f6f]">
-                  Phone Number
-                </label>
-              </div>
+              <section className="grid grid-cols-1 lg:grid-cols-3 gap-3 w-full">
+                <div className="flex flex-col-reverse sm:flex-col">
+                  <Input
+                    type="text"
+                    name="first_name"
+                    required
+                    className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                    value={formData.guardian.first_name}
+                    onChange={handleGuardianChange}
+                  />
+                  <span className="text-sm font-semibold text-[#6f6f6f]">
+                    First Name
+                  </span>
+                </div>
+                <div className="flex flex-col-reverse sm:flex-col">
+                  <Input
+                    type="text"
+                    name="middle_name"
+                    required
+                    className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                    value={formData.guardian.middle_name}
+                    onChange={handleGuardianChange}
+                  />
+                  <span className="text-sm font-semibold text-[#6f6f6f]">
+                    Middle Name
+                  </span>
+                </div>
+                <div className="flex flex-col-reverse sm:flex-col">
+                  <Input
+                    type="text"
+                    name="last_name"
+                    required
+                    className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                    value={formData.guardian.last_name}
+                    onChange={handleGuardianChange}
+                  />
+                  <span className="text-sm font-semibold text-[#6f6f6f]">
+                    Last Name
+                  </span>
+                </div>
+              </section>
             </div>
           </div>
-          <div className="flex flex-col w-full md:flex-row  md:gap-4 flex-1">
-            <label className="text-[1rem] font-semibold text-[#555]">
-              E-mail<span className="text-secondary">*</span>{" "}
-            </label>
-
-            <div className="flex-1">
+          {/* Guardian Phone Number Section */}
+          <div className="grid mt-10 grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="flex ">
+              <label className="text-[1rem] font-semibold text-[#555]">
+                Phone Number
+              </label>
+              <Input
+                type="text"
+                name="phone_number"
+                required
+                className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                value={formData.guardian.phone_number}
+                onChange={handleGuardianChange}
+              />
+            </div>
+            {/* <div>
+              <label className="text-[1rem] font-semibold text-[#555]">
+                Email
+              </label>
               <Input
                 type="email"
                 name="email"
-                placeholder="JOHNDOE@GMAIL.COM"
-                value={formDataOne.email}
-                onChange={handleChange}
-                className="border border-[#ccc] rounded-md "
+                placeholder="james@gmail.com"
+                required
+                className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                value={formData.guardian.email || ""}
+                onChange={handleGuardianChange}
               />
-              <span className="text-sm font-semibold text-[#6f6f6f]">
-                example@example.com
-              </span>
-            </div>
+            </div> */}
           </div>
-        </div>
-        {/* </div> */}
-        <div className="flex lg:items-center gap-4  w-full max-w-3xl flex-col lg:flex-row">
-          <label className="text-[1rem] font-semibold text-[#555] max-w-[9.375rem] w-full">
-            Parent/ Guardian/ Sponsor Name
-            <span className="text-secondary">*</span>
-          </label>
-          <div className="flex flex-col md:flex-row gap-4">
-            <label htmlFor="" className="flex flex-col">
-              <Dropdown
-                name="guardianTitle"
-                options={prefix}
-                value={formDataOne.guardianTitle}
-                onChange={handleChange}
-                className="border border-[#ccc] p-1 rounded-md w-fit focus:outline-none"
-              />
-              <span className="text-sm font-semibold text-[#6f6f6f]">
-                Title
-              </span>
+          <div className="lg:flex mt-10 gap-4 flex-col sm:flex-row sm:gap-8 max-w-3xl">
+            <label className="text-[1rem] font-semibold text-[#555]">
+              Guardian Address <span className="text-secondary">*</span>
             </label>
-            <label htmlFor="">
-              <Input
-                type="text"
-                name="guardianFirstName"
-                className="border border-[#ccc] rounded-md"
-                value={formDataOne.guardianFirstName}
-                onChange={handleChange}
-              />
-              <span className="text-sm font-semibold text-[#6f6f6f]">
-                First Name
-              </span>
-            </label>
-
-            <label htmlFor="">
-              <Input
-                type="text"
-                name="guardianMiddleName"
-                className="border border-[#ccc] rounded-md"
-                value={formDataOne.guardianMiddleName}
-                onChange={handleChange}
-              />
-              <span className="text-sm font-semibold text-[#6f6f6f]">
-                Middle Name
-              </span>
-            </label>
-
-            <label htmlFor="">
-              <Input
-                type="text"
-                name="guardianLastName"
-                className="border border-[#ccc] rounded-md"
-                value={formDataOne.guardianLastName}
-                onChange={handleChange}
-              />
-              <span className="text-sm font-semibold text-[#6f6f6f]">
-                Last Name
-              </span>
-            </label>
-          </div>
-        </div>
-        {/* parent/ guardian/ sponsor address */}
-        <div className="flex gap-3 max-w-3xl my-4  flex-col md:flex-row">
-          <label className="max-w-[9.375rem] w-full">
-            Parent/ Guardian/ <br /> Sponsor Address
-            <span className="text-secondary">*</span>
-          </label>
-          <div className="flex flex-col gap-4 max-w-3xl w-full">
-            <div className="flex w-full gap-4 flex-col sm:flex-row">
-              <div className="w-full">
+            <div className="">
+              <div className="flex flex-col-reverse sm:flex-col">
                 <Input
                   type="text"
-                  name="guardianAddress"
-                  className="border border-[#ccc] rounded-md"
-                  value={formDataOne.guardianAddress}
-                  onChange={handleChange}
+                  name="street_address_line_1"
+                  required
+                  className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                  value={formData.address[1]?.street_address_line_1 || ""}
+                  onChange={(e) => handleAddressChange(1, e)}
                 />
                 <span className="text-sm font-semibold text-[#6f6f6f]">
-                  {" "}
                   Street Address
                 </span>
               </div>
-
-              <div className="w-full">
-                <Input
-                  type="text"
-                  name="guardianStreetAddress"
-                  className="border border-[#ccc] rounded-md"
-                  value={formDataOne.guardianStreetAddress}
-                  onChange={handleChange}
-                />
-                <span className="text-sm font-semibold text-[#6f6f6f]">
-                  Street Address Line 2
-                </span>
-              </div>
-            </div>
-
-            <div className="flex gap-4 flex-col sm:flex-row w-full">
-              <div className="w-full">
-                <Input
-                  type="text"
-                  name="guardianCity"
-                  className="border border-[#ccc] rounded-md"
-                  value={formDataOne.guardianCity}
-                  onChange={handleChange}
-                />
-                <span className="text-sm font-semibold text-[#6f6f6f]">
-                  city
-                </span>
-              </div>
-
-              <div className="w-full">
-                <Input
-                  type="text"
-                  name="guardianState"
-                  className="border border-[#ccc] rounded-md"
-                  value={formDataOne.guardianState}
-                  onChange={handleChange}
-                />
-                <span className="text-sm font-semibold text-[#6f6f6f]">
-                  {" "}
-                  state
-                </span>
-              </div>
-            </div>
-            <div className="flex flex-col sm:flex-row gap-4">
-              <div className="flex flex-col w-full">
-                <Input
-                  type="text"
-                  name="postalCode"
-                  value={formDataOne.postalCode}
-                  onChange={handleChange}
-                  className="border border-[#ccc]  rounded-md"
-                />
-                <span className="text-sm font-semibold text-[#6f6f6f]">
-                  postal/Zip Code
-                </span>
-              </div>
-              <div className="flex flex-col w-full">
-                <Input
-                  type="text"
-                  name="guardianCountry"
-                  value={formDataOne.guardianCountry}
-                  onChange={handleChange}
-                  className="border border-[#ccc] rounded-md"
-                />
-                <span className="text-sm font-semibold text-[#6f6f6f]">
-                  country
-                </span>
-              </div>
+              <section className="mt-4 grid lg:grid-cols-3 gap-4">
+                <div>
+                  <label className="text-[1rem] font-semibold text-[#555]">
+                    City <span className="text-secondary">*</span>
+                  </label>
+                  <Input
+                    type="text"
+                    name="city"
+                    required
+                    className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                    value={formData.address[1]?.city || ""}
+                    onChange={(e) => handleAddressChange(1, e)}
+                  />
+                </div>
+                <div>
+                  <label className="text-[1rem] font-semibold text-[#555]">
+                    State
+                  </label>
+                  <Input
+                    type="text"
+                    name="state"
+                    required
+                    className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                    value={formData.address[1]?.state || ""}
+                    onChange={(e) => handleAddressChange(1, e)}
+                  />
+                </div>
+                <div>
+                  <label className="text-[1rem] font-semibold text-[#555]">
+                    Country <span className="text-secondary">*</span>
+                  </label>
+                  <Dropdown
+                    options={country}
+                    name="country"
+                    required
+                    className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                    value={formData.address[1]?.country || ""}
+                    onChange={(e) => handleAddressChange(1, e)}
+                  />
+                </div>
+              </section>
             </div>
           </div>
-        </div>
-        {/* <button type='submit' className='border'>submit</button> */}
+        </section>
       </form>
     </div>
   );
