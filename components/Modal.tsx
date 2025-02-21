@@ -12,6 +12,9 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, onConfirm }) => {
   const formContext = useFormContext();
   const error = formContext.error;
   const loading = formContext?.loading;
+  // const data = formContext?.formData
+
+  // console.log(data, "formdata")
   if (!isOpen) return null;
 
   return (

@@ -17,6 +17,7 @@ interface InputProps {
   ref?: React.Ref<HTMLInputElement>;
   checked?: boolean;
   id?: string;
+  readOnly?: boolean;
 }
 
 const Input: React.FC<InputProps> = ({
@@ -34,6 +35,7 @@ const Input: React.FC<InputProps> = ({
   ref,
   checked,
   id = "",
+  readOnly,
 }) => {
   const [showPassword, setShowPassword] = useState(false);
 
@@ -56,6 +58,7 @@ const Input: React.FC<InputProps> = ({
         ref={ref}
         checked={checked}
         id={id}
+        readOnly={readOnly}
         className="input w-full border-none focus:outline-none py-1"
       />
       {type === "password" && (

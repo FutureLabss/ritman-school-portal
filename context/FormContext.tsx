@@ -4,6 +4,7 @@ import { FormDataType } from "@/utils/types"; // Import the types
 import api from "@/utils/api"; // Import the api
 import axios from "axios";
 import { getErrorMessage } from "@/utils/errorHandler";
+import { useRouter } from "next/navigation";
 
 // Define the context type
 interface FormContextType {
@@ -22,6 +23,7 @@ export const FormProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   // Initialize the state with default values
+  const router = useRouter();
   const [formData, setFormData] = useState<FormDataType>({
     applicant: {
       title: "",
@@ -102,11 +104,18 @@ export const FormProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   const submitStudentApplication = async (applicationData: FormDataType) => {
+    const user = JSON.parse(localStorage.getItem("user") || "{}");
+    console.log(user.token);
+    api.defaults.headers.Authorization = `Bearer ${user?.token}`;
+
     setLoading(true);
     setError(null);
     try {
       const response = await api.post("/student/applications", applicationData);
-      return response.data;
+      if (response.status === 201) {
+        router.push("/form-success");
+      }
+      // return response.data;
     } catch (error) {
       if (!navigator.onLine) {
         setError(
