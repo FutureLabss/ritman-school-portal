@@ -5,7 +5,7 @@ import Dropdown from "../DropDown";
 import Input from "../Input";
 import { useFormContext } from "@/context/FormContext"; // Import the context
 import { UserDataTypes } from "@/utils/types";
-import { useUser  } from "@/context/UserContext";
+// import { useUser  } from "@/context/UserContext";
 
 const prefix = [
   { value: "", label: "" },
@@ -30,7 +30,7 @@ const country = [
 
 export default function PersonalDetails() {
   const { formData, updateFormData } = useFormContext(); // Use the context
-  const  {user} = useUser();
+  // const  {user} = useUser();
   const [dob] = useState(localStorage.getItem('dob'));
 
   // console.log(user);
