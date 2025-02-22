@@ -105,9 +105,9 @@ export const FormProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const submitStudentApplication = async (applicationData: FormDataType) => {
     const user = JSON.parse(localStorage.getItem("user") || "{}");
-    console.log(user.token);
     api.defaults.headers.Authorization = `Bearer ${user?.token}`;
 
+    console.log(applicationData);
     setLoading(true);
     setError(null);
     try {

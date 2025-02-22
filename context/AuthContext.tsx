@@ -179,7 +179,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setUser(userData);
       localStorage.setItem("user", JSON.stringify(userData));
       if (response.status === 200) {
-        router.push("/student/dashboard");
+        if (roles[0].name !== "admin") {
+          router.push("/student/dashboard");
+        } else {
+          router.push("/admin/dashboard");
+        }
       }
 
       // Set auth token globally for future API calls
@@ -208,6 +212,30 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setUser(null);
     localStorage.removeItem("user");
     delete api.defaults.headers.Authorization;
+
+    // const authContext = useAuth();
+    // const router = useRouter();
+
+    const logout = async () => {
+      try {
+        const response = await api.post("/auth/logout");
+
+        if (response.status === 200) {
+          // Clear user data from context and localStorage
+          // authContext?.logout();
+          localStorage.removeItem("user");
+
+          // Redirect to login page
+          router.push("/auth/login");
+        } else {
+          console.error("Logout failed");
+        }
+      } catch (error) {
+        console.error("Error during logout:", error);
+      }
+    };
+
+    return logout;
   };
 
   return (

@@ -5,6 +5,7 @@ import Dropdown from "../DropDown";
 import Input from "../Input";
 import { useFormContext } from "@/context/FormContext"; // Import the context
 import { UserDataTypes } from "@/utils/types";
+import { useUser  } from "@/context/UserContext";
 
 const prefix = [
   { value: "", label: "" },
@@ -29,6 +30,9 @@ const country = [
 
 export default function PersonalDetails() {
   const { formData, updateFormData } = useFormContext(); // Use the context
+  const  {user} = useUser();
+
+  // console.log(user);
   const [storeUser, setStoreuser] = useState<UserDataTypes>(
     {} as UserDataTypes
   );
@@ -267,8 +271,9 @@ export default function PersonalDetails() {
                   type="date"
                   name="dob"
                   required
+                  disabled
                   className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
-                  value={formData.applicant.dob || ""}
+                  value={user?.dob || ""}
                   onChange={handleChange}
                 />
               </div>

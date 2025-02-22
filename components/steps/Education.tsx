@@ -1,7 +1,8 @@
-import { ChangeEvent } from "react";
+import { ChangeEvent, useEffect } from "react";
 import Input from "../Input";
 import Dropdown from "../DropDown";
 import { useFormContext } from "../../context/FormContext"; // Import the context
+import { useUser } from "@/context/UserContext";
 
 const Qualification = [
   { value: "", label: "" },
@@ -15,6 +16,7 @@ const Qualification = [
 
 export default function Education() {
   const { formData, updateFormData } = useFormContext(); // Use the context
+  const { user } = useUser();
 
   const handleChange = (
     index: number, // Add index parameter
@@ -31,10 +33,23 @@ export default function Education() {
     });
   };
 
+  useEffect(() => {
+    if (user?.school_metadata.department) {
+      updateFormData({
+        ...formData,
+        jamb: {
+          ...formData.jamb,
+          program_of_choice: user.school_metadata.department,
+        },
+      });
+    }
+  }, [user]); // Run this effect when the `user` object changes
+
   const handleJambChange = (
     e: ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
+    // console.log(value);
 
     // Update the JAMB data in the context
     updateFormData({
@@ -80,8 +95,9 @@ export default function Education() {
                   type="text"
                   required
                   name="program_of_choice"
+                  readOnly
                   onChange={handleJambChange}
-                  value={formData.jamb.program_of_choice}
+                  value={user?.school_metadata.department || ""}
                   className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
                 />
               </div>
