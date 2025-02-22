@@ -30,6 +30,7 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
 
           if (response.status === 200) {
             const userData: IUser = { ...response.data.data };
+            // console.log(userData);
             setUser(userData);
           }
         } else {

@@ -80,7 +80,7 @@ export const FormProvider: React.FC<{ children: React.ReactNode }> = ({
       jamb_reg_no: "",
       program_of_choice: "",
       course_of_choice: "",
-      academic_session: "",
+      academic_session: "2024/2025",
     },
     identification: {
       country: "",

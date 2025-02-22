@@ -116,6 +116,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         const userData: UserDataTypes = { fullname, roles, token };
         setUser(userData);
         localStorage.setItem("user", JSON.stringify(userData));
+
+        api.defaults.headers.Authorization = `Bearer ${token}`;
+        const res = await api.get("/student/me");
+
+        localStorage.setItem("dob", res.data.data.dob)
+        localStorage.setItem("program", res.data.data.school_metadata.department)
+
         router.push("/student-application");
       }
     } catch (error) {

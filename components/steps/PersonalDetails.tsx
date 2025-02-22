@@ -5,7 +5,7 @@ import Dropdown from "../DropDown";
 import Input from "../Input";
 import { useFormContext } from "@/context/FormContext"; // Import the context
 import { UserDataTypes } from "@/utils/types";
-import { useUser  } from "@/context/UserContext";
+// import { useUser  } from "@/context/UserContext";
 
 const prefix = [
   { value: "", label: "" },
@@ -30,12 +30,15 @@ const country = [
 
 export default function PersonalDetails() {
   const { formData, updateFormData } = useFormContext(); // Use the context
-  const  {user} = useUser();
+  // const  {user} = useUser();
+  const [dob] = useState(localStorage.getItem('dob'));
 
   // console.log(user);
   const [storeUser, setStoreuser] = useState<UserDataTypes>(
     {} as UserDataTypes
   );
+
+  // const [userDob, setUserDob] = useState<IUser>({} as IUser);
 
   const handleChange = (
     e: ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLSelectElement>
@@ -106,7 +109,7 @@ export default function PersonalDetails() {
     }
   }, []);
 
-  console.log(storeUser, "store");
+  // console.log(storeUser, "store");
 
   return (
     <div className="">
@@ -273,7 +276,7 @@ export default function PersonalDetails() {
                   required
                   disabled
                   className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
-                  value={user?.dob || ""}
+                  value={dob || ""}
                   onChange={handleChange}
                 />
               </div>
