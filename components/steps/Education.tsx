@@ -17,7 +17,8 @@ const Qualification = [
 export default function Education() {
   const { formData, updateFormData } = useFormContext(); // Use the context
   const { user } = useUser();
-  const [department] = useState(localStorage.getItem('program') || "");
+  const [department] = useState(localStorage.getItem('program'));
+
 
   const handleChange = (
     index: number, // Add index parameter
@@ -40,12 +41,11 @@ export default function Education() {
         ...formData,
         jamb: {
           ...formData.jamb,
-          program_of_choice: department,
-          // program_of_choice: user.school_metadata.department,
+          program_of_choice: user.school_metadata.department,
         },
       });
     }
-  }); // Run this effect when the `user` object changes
+  }, [user]); // Run this effect when the `user` object changes
 
   const handleJambChange = (
     e: ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLSelectElement>
@@ -97,9 +97,8 @@ export default function Education() {
                   type="text"
                   required
                   name="program_of_choice"
-                  readOnly
                   onChange={handleJambChange}
-                  value={department || ""}
+                  value={user?.school_metadata.department ? user?.school_metadata.department : department || ""}
                   className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
                 />
               </div>
