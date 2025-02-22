@@ -45,7 +45,7 @@ export default function Education() {
         },
       });
     }
-  }, [user]); // Run this effect when the `user` object changes
+  }, []); // Run this effect when the `user` object changes
 
   const handleJambChange = (
     e: ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLSelectElement>
