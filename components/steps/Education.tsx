@@ -1,4 +1,4 @@
-import { ChangeEvent, useEffect } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import Input from "../Input";
 import Dropdown from "../DropDown";
 import { useFormContext } from "../../context/FormContext"; // Import the context
@@ -17,6 +17,7 @@ const Qualification = [
 export default function Education() {
   const { formData, updateFormData } = useFormContext(); // Use the context
   const { user } = useUser();
+  const [department] = useState(localStorage.getItem('program') || "");
 
   const handleChange = (
     index: number, // Add index parameter
@@ -39,7 +40,8 @@ export default function Education() {
         ...formData,
         jamb: {
           ...formData.jamb,
-          program_of_choice: user.school_metadata.department,
+          program_of_choice: department,
+          // program_of_choice: user.school_metadata.department,
         },
       });
     }
@@ -97,7 +99,7 @@ export default function Education() {
                   name="program_of_choice"
                   readOnly
                   onChange={handleJambChange}
-                  value={user?.school_metadata.department || ""}
+                  value={department || ""}
                   className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
                 />
               </div>

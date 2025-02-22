@@ -137,7 +137,7 @@ const RegistrationForm = () => {
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700">
-                Date of birth (mm/dd/yy)
+                Date of birth
               </label>
               <Input
                 name="dob"
