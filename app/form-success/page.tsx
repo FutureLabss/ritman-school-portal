@@ -1,17 +1,64 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import AnimatedImage from "@/components/AnimatedImage";
+import api from "@/utils/api";
 
 export default function FormSuccess() {
   const router = useRouter();
+  const [paymentLink, setPaymentLink] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  // Fetch the Paystack payment link when the component mounts
+  useEffect(() => {
+    const fetchPaymentLink = async () => {
+      try {
+        const userString = localStorage.getItem("user");
+        const user = userString ? JSON.parse(userString) : null;
+
+        if (user?.token) {
+          api.defaults.headers.Authorization = `Bearer ${user.token}`;
+          const response = await api.post("/pay", {
+            fee_id: 1,
+          });
+          console.log(response.data.authorization_url);
+          if (response.status === 200) {
+            setPaymentLink(response.data.authorization_url);
+          } else {
+            setError("Failed to generate payment link");
+          }
+        } else {
+          setError("No user token found");
+        }
+      } catch (error) {
+        console.log(error);
+        setError("An error occurred while fetching the payment link");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPaymentLink();
+  }, []);
+
+  // Handle payment button click
+  const handlePayment = () => {
+    if (paymentLink) {
+      window.location.href = paymentLink; // Redirect to Paystack
+    } else {
+      alert("Payment link is not available. Please try again later.");
+    }
+  };
 
   return (
     <section className="bg-gray-white min-h-screen flex flex-col justify-center items-center">
-      <div className="flex flex-col  max-w-lg mx-auto">
+      <div className="flex flex-col max-w-lg mx-auto">
         <div className="flex justify-start mb-10">
           {/* <Image src="/ritmanLogo.jpg" alt="Logo" width={80} height={80} /> */}
         </div>
+
         {/* Success Message */}
         <h2 className="text-[2rem] text-center font-bold text-primary mb-4">
           Form submitted successfully
@@ -19,23 +66,7 @@ export default function FormSuccess() {
 
         {/* Success Icon */}
         <div className="flex justify-center mb-4">
-          {/* <Image src="/copy.png" alt="Success Icon" width={100} height={100} /> */}
           <AnimatedImage />
-
-          {/* <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-16 w-16 text-green-500"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            strokeWidth={2}
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M5 13l4 4L19 7"
-            />
-          </svg> */}
         </div>
 
         {/* Confirmation Text */}
@@ -46,9 +77,10 @@ export default function FormSuccess() {
         {/* Buttons */}
         <button
           className="w-full bg-primary text-white py-2 rounded-md mb-2 hover:bg-indigo-800 transition"
-          onClick={() => alert("Coming soon...")}
+          onClick={handlePayment}
+          disabled={loading || !paymentLink}
         >
-          Pay Application Fee
+          {loading ? "Loading..." : "Pay Application Fee"}
         </button>
 
         <button
@@ -81,6 +113,9 @@ export default function FormSuccess() {
             to pay their admission fee for the form to be processed. Thank you!
           </p>
         </div>
+
+        {/* Error Message */}
+        {error && <p className="text-red-500 text-center mt-4">{error}</p>}
       </div>
     </section>
   );
