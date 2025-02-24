@@ -185,9 +185,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const userData: UserDataTypes = { fullname, roles, token };
       setUser(userData);
       localStorage.setItem("user", JSON.stringify(userData));
+
+      api.defaults.headers.Authorization = `Bearer ${token}`;
+      const res = await api.get("/student/me");
+
       if (response.status === 200) {
         if (roles[0].name !== "admin") {
-          router.push("/student/dashboard");
+          if(res.data.data.submitted_application){
+            router.push("/student/dashboard");
+          }else{
+            router.push("/student-application");
+          }
         } else {
           router.push("/admin/dashboard");
         }
