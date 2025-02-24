@@ -50,7 +50,7 @@ export const ADMIN_NAV_ITEMS = [
       id: 1,
       label: "Student Applications",
       icon: "🏠", // Replace with actual icons or components
-      path: "/admin",
+      path: "/admin/applications",
     },
     {
       id: 2,

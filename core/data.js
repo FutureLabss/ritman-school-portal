@@ -1,4 +1,6 @@
 const countryList = [
+	{ value: "", label: "" },
+	
 	{ value: "Nigeria", label: "Nigeria" },
   { value: "Afghanistan", label: "Afghanistan" },
   { value: "Albania", label: "Albania" },

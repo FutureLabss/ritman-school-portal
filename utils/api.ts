@@ -1,8 +1,6 @@
 import axios from "axios";
-
-// const API_BASE_URL = "http://localhost:8000/api/v1";
-const API_BASE_URL = "https://ritman-uni-be.onrender.com/api/v1";
-const API_KEY = "Rd6IMmXI6o3U9jx3D0bmhZR5QdeKtnrcZ";
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+const API_KEY = process.env.NEXT_PUBLIC_API_KEY;
 
 const api = axios.create({
   baseURL: API_BASE_URL,

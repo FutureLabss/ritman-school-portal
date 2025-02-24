@@ -14,7 +14,6 @@ export default function Identification() {
 
     // Update the form data in the context
     updateFormData({
-      ...formData,
       identification: {
         ...formData.identification,
         [name]: value,

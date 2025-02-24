@@ -1,9 +1,10 @@
-// import React, { useEffect } from "react";
-import { ChangeEvent } from "react";
+"use client";
+import { ChangeEvent, useState, useEffect } from "react";
 import Input from "../Input";
 import Dropdown from "../DropDown";
 import { useFormContext } from "../../context/FormContext";
-// import { UserDataTypes } from "@/utils/types";
+// import { useUser } from "@/context/UserContext";
+import { RegisterFormDataType, IUser } from "@/utils/types";
 
 const Qualification = [
   { value: "", label: "" },
@@ -17,7 +18,10 @@ const Qualification = [
 
 export default function Education() {
   const { formData, updateFormData } = useFormContext();
-  // const [storeData, setStoreData] = useState<UserDataTypes>();
+  const [faculty, setFaculty] = useState<IUser>();
+  const [storeData, setStoreData] = useState<RegisterFormDataType>();
+  // const { user } = useUser();
+  // const [department] = useState(localStorage.getItem("program"));
 
   const handleChange = (
     index: number, // Add index parameter
@@ -34,10 +38,33 @@ export default function Education() {
     });
   };
 
+  useEffect(() => {
+    if (faculty?.school_metadata.department) {
+      updateFormData({
+        ...formData,
+        jamb: {
+          ...formData.jamb,
+          program_of_choice: faculty.school_metadata.faculty,
+          course_of_choice: storeData?.choosen_program || "",
+        },
+      });
+    }
+  }, [faculty]); // Run this effect when the `user` object changes
+
+  useEffect(() => {
+    const fa = localStorage.getItem("userProfile")
+      ? JSON.parse(localStorage.getItem("userProfile") as string)
+      : null;
+    if (fa) {
+      setFaculty(fa);
+    }
+  }, []);
+
   const handleJambChange = (
     e: ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
+    // console.log(value);
 
     // Update the JAMB data in the context
     updateFormData({
@@ -54,16 +81,16 @@ export default function Education() {
     console.log(formData); // Log the form data from the context
   };
 
-  // useEffect(() => {
-  //   const userData = localStorage.getItem("user")
-  //     ? JSON.parse(localStorage.getItem("user") as string)
-  //     : null;
-  //   if (userData) {
-  //     setStoreData(userData);
-  //   }
-  // }, []);
+  useEffect(() => {
+    const userData = localStorage.getItem("userReg")
+      ? JSON.parse(localStorage.getItem("userReg") as string)
+      : null;
+    if (userData) {
+      setStoreData(userData);
+    }
+  }, []);
 
-  // console.log(storeData, "me");
+  console.log(faculty, "me-w");
 
   return (
     <div className="pb-12">
@@ -92,10 +119,12 @@ export default function Education() {
                 </label>
                 <Input
                   type="text"
-                  required
                   name="course_of_choice"
+                  required
                   onChange={handleJambChange}
-                  value={formData.jamb.course_of_choice}
+                  // value={formData.jamb.course_of_choice}
+                  defaultValue={storeData?.choosen_program || ""}
+                  disabled
                   className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
                 />
               </div>
@@ -108,12 +137,10 @@ export default function Education() {
                 </label>
                 <Input
                   type="text"
-                  name="faculty"
                   required
-                  // onChange={handleJambChange}
-                  // value={formData.jamb.course_of_choice}
-                  defaultValue="Chemistry"
-                  disabled
+                  name="program_of_choice"
+                  onChange={handleJambChange}
+                  defaultValue={faculty?.school_metadata.faculty}
                   className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
                 />
               </div>

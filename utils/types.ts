@@ -34,6 +34,31 @@ interface UserDataTypes {
   token: string;
 }
 
+// For me endpoint
+interface SchoolMetadata {
+  faculty: string;
+  department: string;
+  admission_status: string;
+}
+
+interface IUser {
+  id: number;
+  title: string;
+  fullname: string;
+  first_name: string;
+  middle_name: string;
+  last_name: string;
+  dob: string;
+  gender: string;
+  email: string;
+  phone: string;
+  state: string;
+  city: string;
+  street: string;
+  marital_status: string;
+  school_metadata: SchoolMetadata;
+}
+
 // Address type
 interface Address {
   type: "applicant" | "guardian";
@@ -64,7 +89,7 @@ interface Guardian {
 // JAMB type
 interface Jamb {
   jamb_reg_no: string;
-  faculty: string;
+  program_of_choice: string;
   course_of_choice: string;
   academic_session: string;
 }
@@ -109,4 +134,5 @@ export type {
   LoginFormDataType,
   verificationCodeDataType,
   UserDataTypes,
+  IUser,
 };

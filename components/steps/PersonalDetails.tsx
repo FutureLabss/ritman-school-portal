@@ -5,6 +5,8 @@ import Dropdown from "../DropDown";
 import Input from "../Input";
 import { useFormContext } from "@/context/FormContext"; // Import the context
 import { RegisterFormDataType } from "@/utils/types";
+// import { UserDataTypes } from "@/utils/types";
+// import { useUser  } from "@/context/UserContext";
 
 const prefix = [
   { value: "", label: "" },
@@ -32,6 +34,10 @@ export default function PersonalDetails() {
   const [storeUser, setStoreuser] = useState<RegisterFormDataType>(
     {} as RegisterFormDataType
   );
+  // const  {user} = useUser();
+  // const [dob] = useState(localStorage.getItem('dob'));
+
+  // const [userDob, setUserDob] = useState<IUser>({} as IUser);
 
   const handleChange = (
     e: ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLSelectElement>
@@ -270,9 +276,12 @@ export default function PersonalDetails() {
                   type="date"
                   name="dob"
                   required
+                  disabled
                   className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
                   // value={formData.applicant.dob || ""}
                   defaultValue={storeUser?.dob || ""}
+                  // onChange={handleChange}
+                  // value={dob || ""}
                   // onChange={handleChange}
                 />
               </div>
