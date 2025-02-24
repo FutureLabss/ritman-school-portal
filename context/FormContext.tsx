@@ -11,6 +11,7 @@ interface FormContextType {
   formData: FormDataType;
   loading: boolean;
   error: string | null;
+  setError: (error: string | null) => void;
   updateFormData: (data: Partial<FormDataType>) => void;
   submitStudentApplication: (applicationData: FormDataType) => Promise<void>;
 }
@@ -141,6 +142,7 @@ export const FormProvider: React.FC<{ children: React.ReactNode }> = ({
         formData,
         loading,
         error,
+        setError,
         updateFormData,
         submitStudentApplication,
       }}

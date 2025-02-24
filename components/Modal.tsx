@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Button from "@/components/Button";
 import { useFormContext } from "@/context/FormContext";
 
@@ -12,9 +12,19 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, onConfirm }) => {
   const formContext = useFormContext();
   const error = formContext.error;
   const loading = formContext?.loading;
-  // const data = formContext?.formData
+  const setError = formContext?.setError;
 
-  // console.log(data, "formdata")
+  useEffect(() => {
+    if (error) {
+      const timer = setTimeout(() => {
+        if (setError) {
+          setError(null);
+        }
+      }, 10000); // Clear error after 10 seconds
+      return () => clearTimeout(timer);
+    }
+  }, [error, setError]);
+
   if (!isOpen) return null;
 
   return (
