@@ -1,7 +1,9 @@
+// import React, { useEffect } from "react";
 import { ChangeEvent } from "react";
 import Input from "../Input";
 import Dropdown from "../DropDown";
-import { useFormContext } from "../../context/FormContext"; // Import the context
+import { useFormContext } from "../../context/FormContext";
+// import { UserDataTypes } from "@/utils/types";
 
 const Qualification = [
   { value: "", label: "" },
@@ -14,7 +16,8 @@ const Qualification = [
 ];
 
 export default function Education() {
-  const { formData, updateFormData } = useFormContext(); // Use the context
+  const { formData, updateFormData } = useFormContext();
+  // const [storeData, setStoreData] = useState<UserDataTypes>();
 
   const handleChange = (
     index: number, // Add index parameter
@@ -51,6 +54,17 @@ export default function Education() {
     console.log(formData); // Log the form data from the context
   };
 
+  // useEffect(() => {
+  //   const userData = localStorage.getItem("user")
+  //     ? JSON.parse(localStorage.getItem("user") as string)
+  //     : null;
+  //   if (userData) {
+  //     setStoreData(userData);
+  //   }
+  // }, []);
+
+  // console.log(storeData, "me");
+
   return (
     <div className="pb-12">
       <form onSubmit={handleSubmit} className="">
@@ -74,14 +88,14 @@ export default function Education() {
               <div>
                 {/* Programme of Choice */}
                 <label className="text-sm font-semibold text-[#555]">
-                  Programme of Choice<span className="text-secondary">*</span>
+                  Course of Choice<span className="text-secondary">*</span>
                 </label>
                 <Input
                   type="text"
                   required
-                  name="program_of_choice"
+                  name="course_of_choice"
                   onChange={handleJambChange}
-                  value={formData.jamb.program_of_choice}
+                  value={formData.jamb.course_of_choice}
                   className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
                 />
               </div>
@@ -90,14 +104,16 @@ export default function Education() {
             <section>
               <div>
                 <label className="text-sm font-semibold text-[#555]">
-                  Course of Choice <span className="text-secondary">*</span>{" "}
+                  Faculty <span className="text-secondary">*</span>{" "}
                 </label>
                 <Input
                   type="text"
-                  name="course_of_choice"
+                  name="faculty"
                   required
-                  onChange={handleJambChange}
-                  value={formData.jamb.course_of_choice}
+                  // onChange={handleJambChange}
+                  // value={formData.jamb.course_of_choice}
+                  defaultValue="Chemistry"
+                  disabled
                   className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
                 />
               </div>

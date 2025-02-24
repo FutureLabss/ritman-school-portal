@@ -4,7 +4,7 @@ import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 interface InputProps {
   type: string;
-  value: string;
+  value?: string;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   placeholder?: string;
   disabled?: boolean;
@@ -18,6 +18,7 @@ interface InputProps {
   checked?: boolean;
   id?: string;
   readOnly?: boolean;
+  defaultValue?: string;
 }
 
 const Input: React.FC<InputProps> = ({
@@ -36,6 +37,7 @@ const Input: React.FC<InputProps> = ({
   checked,
   id = "",
   readOnly,
+  defaultValue,
 }) => {
   const [showPassword, setShowPassword] = useState(false);
 
@@ -59,6 +61,7 @@ const Input: React.FC<InputProps> = ({
         checked={checked}
         id={id}
         readOnly={readOnly}
+        defaultValue={defaultValue}
         className="input w-full border-none focus:outline-none py-1"
       />
       {type === "password" && (

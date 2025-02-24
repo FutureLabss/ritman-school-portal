@@ -2,16 +2,7 @@ import { ChangeEvent } from "react";
 import Input from "../Input";
 import Dropdown from "../DropDown";
 import { useFormContext } from "../../context/FormContext"; // Import the context
-
-const typeOfId = [
-  { value: "", label: "" },
-  { value: "NIN", label: "NIN" },
-  // { value: "National ID", label: "National ID" },
-  // { value: "Driver License", label: "Driver License" },
-  // { value: "Voter Card", label: "Voter Card" },
-  // { value: "Utility Bill", label: "Utility Bill" },
-  // { value: "Bank Statement", label: "Bank Statement" },
-];
+import { countryList, typeOfId } from "@/core/data";
 
 export default function Identification() {
   const { formData, updateFormData } = useFormContext(); // Use the context
@@ -44,12 +35,21 @@ export default function Identification() {
             Nationality <span className="text-secondary">*</span>
           </label>
           <div className="flex lg:w-full flex-col-reverse sm:flex-col">
-            <Input
+            {/* <Input
               className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
               type="text"
               name="country"
+              required
               value={formData.identification.country}
               onChange={handleChange}
+            /> */}
+            <Dropdown
+              name="country"
+              required
+              options={countryList}
+              value={formData.identification.country}
+              onChange={handleChange}
+              className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
             />
             <span className="text-xs text-[#6F6F6F] font-medium">Country</span>
           </div>
@@ -61,6 +61,7 @@ export default function Identification() {
             <Dropdown
               options={typeOfId}
               name="document_type"
+              required
               value={formData.identification.document_type}
               onChange={handleChange}
               className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
@@ -71,6 +72,7 @@ export default function Identification() {
             <Input
               className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
               type="text"
+              required
               name="document_number"
               value={formData.identification.document_number}
               onChange={handleChange}
@@ -87,6 +89,7 @@ export default function Identification() {
               <Input
                 type="date"
                 name="document_issue_date"
+                required
                 value={formData.identification.document_issue_date}
                 onChange={handleChange}
                 className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
@@ -102,6 +105,7 @@ export default function Identification() {
             <div className="flex gap-1 items-center">
               <Input
                 type="date"
+                required
                 name="document_expiration_date"
                 value={formData.identification.document_expiration_date}
                 onChange={handleChange}

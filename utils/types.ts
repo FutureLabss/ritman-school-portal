@@ -64,7 +64,7 @@ interface Guardian {
 // JAMB type
 interface Jamb {
   jamb_reg_no: string;
-  program_of_choice: string;
+  faculty: string;
   course_of_choice: string;
   academic_session: string;
 }
