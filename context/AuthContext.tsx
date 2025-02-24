@@ -186,11 +186,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setUser(userData);
       localStorage.setItem("user", JSON.stringify(userData));
 
-      api.defaults.headers.Authorization = `Bearer ${token}`;
-      const res = await api.get("/student/me");
-
+      
       if (response.status === 200) {
         if (roles[0].name !== "admin") {
+          api.defaults.headers.Authorization = `Bearer ${token}`;
+          const res = await api.get("/student/me");
+          
           if(res.data.data.submitted_application){
             router.push("/student/dashboard");
           }else{
