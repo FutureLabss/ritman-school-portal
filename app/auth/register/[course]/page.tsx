@@ -13,6 +13,8 @@ const RegistrationForm = () => {
   const params = useParams(); 
   const course = params.course as string;
 
+  const formattedCourse = decodeURIComponent(course);
+  
   const authContext = useAuth();
   const register = authContext?.register;
   const error = authContext?.error;
@@ -22,7 +24,7 @@ const RegistrationForm = () => {
     last_name: "",
     email: "",
     dob: "",
-    choosen_program: course || "",
+    choosen_program: formattedCourse || "",
   });
   const [formError, setFormError] = useState<string | null>(null);
 
