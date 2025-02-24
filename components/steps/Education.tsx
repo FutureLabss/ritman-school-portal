@@ -1,8 +1,10 @@
-import { ChangeEvent, useEffect, useState } from "react";
+"use client";
+import { ChangeEvent, useState, useEffect } from "react";
 import Input from "../Input";
 import Dropdown from "../DropDown";
-import { useFormContext } from "../../context/FormContext"; // Import the context
-import { useUser } from "@/context/UserContext";
+import { useFormContext } from "../../context/FormContext";
+// import { useUser } from "@/context/UserContext";
+import { RegisterFormDataType, IUser } from "@/utils/types";
 
 const Qualification = [
   { value: "", label: "" },
@@ -15,10 +17,11 @@ const Qualification = [
 ];
 
 export default function Education() {
-  const { formData, updateFormData } = useFormContext(); // Use the context
-  const { user } = useUser();
-  const [department] = useState(localStorage.getItem('program'));
-
+  const { formData, updateFormData } = useFormContext();
+  const [faculty, setFaculty] = useState<IUser>();
+  const [storeData, setStoreData] = useState<RegisterFormDataType>();
+  // const { user } = useUser();
+  // const [department] = useState(localStorage.getItem("program"));
 
   const handleChange = (
     index: number, // Add index parameter
@@ -36,16 +39,26 @@ export default function Education() {
   };
 
   useEffect(() => {
-    if (user?.school_metadata.department) {
+    if (faculty?.school_metadata.department) {
       updateFormData({
         ...formData,
         jamb: {
           ...formData.jamb,
-          program_of_choice: user.school_metadata.department,
+          program_of_choice: faculty.school_metadata.faculty,
+          course_of_choice: storeData?.choosen_program || "",
         },
       });
     }
-  }, [user]); // Run this effect when the `user` object changes
+  }, [faculty]); // Run this effect when the `user` object changes
+
+  useEffect(() => {
+    const fa = localStorage.getItem("userProfile")
+      ? JSON.parse(localStorage.getItem("userProfile") as string)
+      : null;
+    if (fa) {
+      setFaculty(fa);
+    }
+  }, []);
 
   const handleJambChange = (
     e: ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLSelectElement>
@@ -67,6 +80,17 @@ export default function Education() {
     e.preventDefault();
     console.log(formData); // Log the form data from the context
   };
+
+  useEffect(() => {
+    const userData = localStorage.getItem("userReg")
+      ? JSON.parse(localStorage.getItem("userReg") as string)
+      : null;
+    if (userData) {
+      setStoreData(userData);
+    }
+  }, []);
+
+  console.log(faculty, "me-w");
 
   return (
     <div className="pb-12">
@@ -91,14 +115,16 @@ export default function Education() {
               <div>
                 {/* Programme of Choice */}
                 <label className="text-sm font-semibold text-[#555]">
-                  Programme of Choice<span className="text-secondary">*</span>
+                  Course of Choice<span className="text-secondary">*</span>
                 </label>
                 <Input
                   type="text"
+                  name="course_of_choice"
                   required
-                  name="program_of_choice"
                   onChange={handleJambChange}
-                  value={user?.school_metadata.department ? user?.school_metadata.department : department || ""}
+                  // value={formData.jamb.course_of_choice}
+                  defaultValue={storeData?.choosen_program || ""}
+                  disabled
                   className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
                 />
               </div>
@@ -107,14 +133,14 @@ export default function Education() {
             <section>
               <div>
                 <label className="text-sm font-semibold text-[#555]">
-                  Course of Choice <span className="text-secondary">*</span>{" "}
+                  Faculty <span className="text-secondary">*</span>{" "}
                 </label>
                 <Input
                   type="text"
-                  name="course_of_choice"
                   required
+                  name="program_of_choice"
                   onChange={handleJambChange}
-                  value={formData.jamb.course_of_choice}
+                  defaultValue={faculty?.school_metadata.faculty}
                   className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
                 />
               </div>

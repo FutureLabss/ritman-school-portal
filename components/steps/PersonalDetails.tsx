@@ -4,7 +4,8 @@ import { ChangeEvent } from "react";
 import Dropdown from "../DropDown";
 import Input from "../Input";
 import { useFormContext } from "@/context/FormContext"; // Import the context
-import { UserDataTypes } from "@/utils/types";
+import { RegisterFormDataType } from "@/utils/types";
+// import { UserDataTypes } from "@/utils/types";
 // import { useUser  } from "@/context/UserContext";
 
 const prefix = [
@@ -30,13 +31,11 @@ const country = [
 
 export default function PersonalDetails() {
   const { formData, updateFormData } = useFormContext(); // Use the context
-  // const  {user} = useUser();
-  const [dob] = useState(localStorage.getItem('dob'));
-
-  // console.log(user);
-  const [storeUser, setStoreuser] = useState<UserDataTypes>(
-    {} as UserDataTypes
+  const [storeUser, setStoreuser] = useState<RegisterFormDataType>(
+    {} as RegisterFormDataType
   );
+  // const  {user} = useUser();
+  // const [dob] = useState(localStorage.getItem('dob'));
 
   // const [userDob, setUserDob] = useState<IUser>({} as IUser);
 
@@ -101,8 +100,8 @@ export default function PersonalDetails() {
   };
 
   useEffect(() => {
-    const storedUser = localStorage.getItem("user")
-      ? JSON.parse(localStorage.getItem("user") as string)
+    const storedUser = localStorage.getItem("userReg")
+      ? JSON.parse(localStorage.getItem("userReg") as string)
       : null;
     if (storedUser) {
       setStoreuser(storedUser);
@@ -141,39 +140,42 @@ export default function PersonalDetails() {
                   required
                   disabled
                   className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
-                  value={storeUser?.fullname || ""}
+                  // value={storeUser?.first_name || ""}
+                  defaultValue={storeUser?.first_name || ""}
                   // onChange={handleChange}
                 />
                 <span className="text-sm font-semibold text-[#6f6f6f]">
-                  Full Name
+                  First Name
                 </span>
               </div>
-              {/* <div className="flex flex-col-reverse sm:flex-col">
+              <div className="flex flex-col-reverse sm:flex-col">
                 <Input
                   type="text"
                   name="middle_name"
                   required
                   className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
-                  value={formData.applicant.middle_name}
-                  onChange={handleChange}
+                  // value={storeUser?.middle_name || ""}
+                  defaultValue={storeUser?.middle_name || ""}
+                  // onChange={handleChange}
                 />
                 <span className="text-sm font-semibold text-[#6f6f6f]">
                   Middle Name
                 </span>
-              </div> */}
-              {/* <div className="flex flex-col-reverse sm:flex-col">
+              </div>
+              <div className="flex flex-col-reverse sm:flex-col">
                 <Input
                   type="text"
                   name="last_name"
                   required
                   className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
-                  value={formData.applicant.last_name}
-                  onChange={handleChange}
+                  // value={storeUser?.last_name || ""}
+                  defaultValue={storeUser?.last_name || ""}
+                  // onChange={handleChange}
                 />
                 <span className="text-sm font-semibold text-[#6f6f6f]">
                   Last Name
                 </span>
-              </div> */}
+              </div>
             </section>
           </div>
         </div>
@@ -276,8 +278,11 @@ export default function PersonalDetails() {
                   required
                   disabled
                   className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
-                  value={dob || ""}
-                  onChange={handleChange}
+                  // value={formData.applicant.dob || ""}
+                  defaultValue={storeUser?.dob || ""}
+                  // onChange={handleChange}
+                  // value={dob || ""}
+                  // onChange={handleChange}
                 />
               </div>
             </div>

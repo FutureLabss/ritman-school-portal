@@ -120,8 +120,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         api.defaults.headers.Authorization = `Bearer ${token}`;
         const res = await api.get("/student/me");
 
-        localStorage.setItem("dob", res.data.data.dob)
-        localStorage.setItem("program", res.data.data.school_metadata.department)
+        localStorage.setItem("dob", res.data.data.dob);
+        localStorage.setItem(
+          "program",
+          res.data.data.school_metadata.department
+        );
 
         router.push("/student-application");
       }
@@ -186,15 +189,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setUser(userData);
       localStorage.setItem("user", JSON.stringify(userData));
 
-      
       if (response.status === 200) {
         if (roles[0].name !== "admin") {
           api.defaults.headers.Authorization = `Bearer ${token}`;
           const res = await api.get("/student/me");
-          
-          if(res.data.data.submitted_application){
+
+          if (res.data.data.submitted_application) {
             router.push("/student/dashboard");
-          }else{
+          } else {
             router.push("/student-application");
           }
         } else {
@@ -216,6 +218,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             : "An unknown error occurred."
         );
       } else {
+        console.log(error, "erro");
         setError("Verification failed. Please try again.");
       }
     } finally {

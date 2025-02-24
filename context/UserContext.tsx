@@ -29,6 +29,10 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
           const response = await api.get("/student/me");
 
           if (response.status === 200) {
+            localStorage.setItem(
+              "userProfile",
+              JSON.stringify(response.data.data)
+            );
             const userData: IUser = { ...response.data.data };
             // console.log(userData);
             setUser(userData);
