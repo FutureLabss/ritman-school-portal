@@ -1,5 +1,5 @@
 "use client";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import PersonalDetails from "./steps/PersonalDetails";
 import Education from "./steps/Education";
 import Identification from "./steps/Identification";
@@ -31,10 +31,22 @@ export default function MultiStepForm() {
   const validateStep = () => {
     const currentComponent = stepRefs.current[currentStep];
     if (currentComponent) {
-      const inputs = currentComponent.querySelectorAll("input[required]");
+      const inputs = currentComponent.querySelectorAll(
+        "input[required], select[required]"
+      );
       const errors: string[] = [];
       inputs.forEach((input) => {
-        if (!(input as HTMLInputElement).value) {
+        if ((input as HTMLInputElement).type === "radio") {
+          const radioGroup = currentComponent.querySelectorAll(
+            `input[name="${(input as HTMLInputElement).name}"]`
+          );
+          const isChecked = Array.from(radioGroup).some(
+            (radio) => (radio as HTMLInputElement).checked
+          );
+          if (!isChecked) {
+            errors.push(`${(input as HTMLInputElement).name} is required`);
+          }
+        } else if (!(input as HTMLInputElement).value) {
           errors.push(`${(input as HTMLInputElement).name} is required`);
         }
       });
@@ -43,6 +55,15 @@ export default function MultiStepForm() {
     }
     return true;
   };
+
+  useEffect(() => {
+    if (formErrors.length > 0) {
+      const timer = setTimeout(() => {
+        setFormErrors([]);
+      }, 10000); // Clear errors after 10 seconds
+      return () => clearTimeout(timer);
+    }
+  }, [formErrors]);
 
   const handleNext = () => {
     if (validateStep() && currentStep < steps.length - 1) {

@@ -55,6 +55,7 @@ export default function Declaration() {
               onChange={handleChange}
               name="declaration"
               id="declaration"
+              required
             />
             <label
               className="text-sm font-medium text-[#555]"
