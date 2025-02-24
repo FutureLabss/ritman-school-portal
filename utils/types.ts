@@ -59,7 +59,6 @@ interface IUser {
   school_metadata: SchoolMetadata;
 }
 
-
 // Address type
 interface Address {
   type: "applicant" | "guardian";
