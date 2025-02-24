@@ -4,7 +4,9 @@
 import { Poppins } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/context/AuthContext";
+import { FormProvider } from "@/context/FormContext";
 import { QueryClient, QueryClientProvider } from "react-query";
+import { UserProvider } from "@/context/UserContext";
 
 const poppins = Poppins({
   variable: "--font-poppins",
@@ -23,7 +25,11 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${poppins.variable} antialiased`}>
         <QueryClientProvider client={queryClient}>
-          <AuthProvider>{children}</AuthProvider>
+          <AuthProvider>
+            <UserProvider>
+              <FormProvider>{children}</FormProvider>
+            </UserProvider>
+          </AuthProvider>
         </QueryClientProvider>
       </body>
     </html>

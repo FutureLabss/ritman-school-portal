@@ -10,16 +10,19 @@ import { FaRegBell } from "react-icons/fa";
 import { MdOutlineKeyboardArrowRight } from "react-icons/md";
 import Image from "next/image";
 import { UserDataTypes } from "@/utils/types";
+import { useUser } from "@/context/UserContext";
 
-const DashboardLayout = ({ children }: { children: ReactNode }) => {
+const   DashboardLayout = ({ children }: { children: ReactNode }) => {
   const router = useRouter();
   const pathname = usePathname();
   const [activeNav, setActiveNav] = useState("");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isUserLoaded, setIsUserLoaded] = useState(false);
   const [getUserData, setGetUserData] = useState<UserDataTypes>();
   const authContext = useAuth();
-  const user = authContext?.user;
+  const authUser = authContext?.user;
   const loading = authContext?.loading;
+  const {user} = useUser();
 
   useEffect(() => {
     // Sync active navigation with the current route
@@ -29,10 +32,20 @@ const DashboardLayout = ({ children }: { children: ReactNode }) => {
   const isAdminRoute = pathname.startsWith("/admin");
   const navItems = isAdminRoute ? ADMIN_NAV_ITEMS : USER_NAV_ITEMS;
 
+  // const handleNavClick = (path: string) => {
+  //   setActiveNav(path);
+  //   router.push(path);
+  //   setIsSidebarOpen(false);
+  // };
+
   const handleNavClick = (path: string) => {
-    setActiveNav(path);
-    router.push(path);
-    setIsSidebarOpen(false);
+    if (path === "/student/logout" || path === "/admin/logout") {
+      authContext?.logout(); // Call the logout function
+    } else {
+      setActiveNav(path);
+      router.push(path);
+      setIsSidebarOpen(false);
+    }
   };
 
   const toggleSidebar = () => {
@@ -40,18 +53,22 @@ const DashboardLayout = ({ children }: { children: ReactNode }) => {
   };
 
   useEffect(() => {
-    if (!loading && !user) {
-      router.push("/auth/login");
-    }
-  }, [user, loading, router]);
-
-  useEffect(() => {
     const getUserdata = JSON.parse(localStorage.getItem("user") || "{}");
     setGetUserData(getUserdata);
   }, []);
 
-  if (loading) return <p>Loading...</p>;
+  useEffect(() => {
+    if (!loading) {
+      const storedUser = localStorage.getItem("user");
+      if (!authUser && !storedUser) {
+        router.push("/auth/login");
+      } else {
+        setIsUserLoaded(true);
+      }
+    }
+  }, [loading, authUser, router]);
 
+  if (loading || !isUserLoaded) return null;
   return (
     <div className="flex min-h-screen bg-gray-100">
       {/* Sidebar */}
@@ -88,7 +105,8 @@ const DashboardLayout = ({ children }: { children: ReactNode }) => {
             <div>
               <p className="text-sm">Student ID</p>
               <p className="text-sm font-semibold">
-                {getUserData ? getUserData.roles[0]?.id : "---"}
+                {/* {getUserData ? getUserData.roles[0]?.id : "---"} */}
+                N/A
               </p>
               <p className="text-sm">Level</p>
             </div>
@@ -133,15 +151,15 @@ const DashboardLayout = ({ children }: { children: ReactNode }) => {
               </div>
               <div className="border-l flex-1 border-black text-center">
                 <p className="font-bold">Faculty</p>
-                <p>-----</p>
+                <p>{ user ? user?.school_metadata.faculty : '-----' }</p>
               </div>
               <div className="border-l flex-1 border-black text-center">
                 <p className="font-bold">Department</p>
-                <p>-----</p>
+                <p>{ user ? user?.school_metadata.department : '-----' }</p>
               </div>
               <div className="border-l flex-1 border-black text-center">
                 <p className="font-bold">Admission Status</p>
-                <p>-----</p>
+                <p>{ user ? user?.school_metadata.admission_status : '-----' }</p>
               </div>
             </div>
             <div className="flex items-center justify-center space-x-2 lg:space-x-4 cursor-pointer">

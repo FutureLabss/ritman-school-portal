@@ -53,7 +53,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     localStorage.setItem("userReg", JSON.stringify(data));
     try {
       const response = await api.post("/auth/register", data);
-      if (response.status === 200) {
+      if (response.status === 201) {
         router.push("/auth/verify");
       }
     } catch (error) {
@@ -116,6 +116,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         const userData: UserDataTypes = { fullname, roles, token };
         setUser(userData);
         localStorage.setItem("user", JSON.stringify(userData));
+
+        api.defaults.headers.Authorization = `Bearer ${token}`;
+        const res = await api.get("/student/me");
+
+        localStorage.setItem("dob", res.data.data.dob)
+        localStorage.setItem("program", res.data.data.school_metadata.department)
+
         router.push("/student-application");
       }
     } catch (error) {
@@ -178,8 +185,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const userData: UserDataTypes = { fullname, roles, token };
       setUser(userData);
       localStorage.setItem("user", JSON.stringify(userData));
+
+      api.defaults.headers.Authorization = `Bearer ${token}`;
+      const res = await api.get("/student/me");
+
       if (response.status === 200) {
-        router.push("/student/dashboard");
+        if (roles[0].name !== "admin") {
+          if(res.data.data.submitted_application){
+            router.push("/student/dashboard");
+          }else{
+            router.push("/student-application");
+          }
+        } else {
+          router.push("/admin/dashboard");
+        }
       }
 
       // Set auth token globally for future API calls
@@ -208,6 +227,30 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setUser(null);
     localStorage.removeItem("user");
     delete api.defaults.headers.Authorization;
+
+    // const authContext = useAuth();
+    // const router = useRouter();
+
+    const logout = async () => {
+      try {
+        const response = await api.post("/auth/logout");
+
+        if (response.status === 200) {
+          // Clear user data from context and localStorage
+          // authContext?.logout();
+          localStorage.removeItem("user");
+
+          // Redirect to login page
+          router.push("/auth/login");
+        } else {
+          console.error("Logout failed");
+        }
+      } catch (error) {
+        console.error("Error during logout:", error);
+      }
+    };
+
+    return logout;
   };
 
   return (
