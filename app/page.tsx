@@ -15,7 +15,7 @@ export default function Home() {
             <p>Dasboard</p>
           </Link>
         ) : (
-          <Link href="/auth/register/chemistry" className="hover:text-secondary">
+          <Link href="/auth/register" className="hover:text-secondary">
             <p>Register</p>
           </Link>
         )}
