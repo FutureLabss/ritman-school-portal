@@ -2,12 +2,13 @@
 import Image from "next/image";
 import Input from "@/components/Input";
 import Button from "@/components/Button";
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useMutation } from "react-query";
 import { useAuth } from "@/context/AuthContext";
 import { RegisterFormDataType } from "@/utils/types";
+import Dropdown from "./DropDown";
 
-const programs = [
+let programs = [
   { value: "Biochemistry", label: "Biochemistry" },
   { value: "Biology", label: "Biology" },
   { value: "Chemistry", label: "Chemistry" },
@@ -46,6 +47,12 @@ const programs = [
 const RegistrationForm = ({ course }: { course?: string }) => {
   const formattedCourse = course ? decodeURIComponent(course) : "";
 
+  const uniquePrograms = new Map();
+  [{ value: formattedCourse, label: formattedCourse }, ...programs].forEach(
+    (p) => uniquePrograms.set(p.value, p)
+  );
+  programs = Array.from(uniquePrograms.values());
+
   const authContext = useAuth();
   const register = authContext?.register;
   const error = authContext?.error;
@@ -55,19 +62,21 @@ const RegistrationForm = ({ course }: { course?: string }) => {
     last_name: "",
     email: "",
     dob: "",
-    choosen_program: formattedCourse || "",
+    choosen_program: "",
   });
   const [formError, setFormError] = useState<string | null>(null);
 
-  const handleFieldChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => {
-    const { name, value } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
-  };
+  const handleFieldChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+      const { name, value } = e.target;
+      console.log(name, value);
+      setFormData((prevData) => ({
+        ...prevData,
+        [name]: value,
+      }));
+    },
+    []
+  );
 
   const mutation = useMutation((data: RegisterFormDataType) => {
     if (register) {
@@ -103,6 +112,15 @@ const RegistrationForm = ({ course }: { course?: string }) => {
       onError: (): void => {},
     });
   };
+
+  useEffect(() => {
+    setFormData((prev) => ({
+      ...prev,
+      choosen_program: formattedCourse || formData.choosen_program,
+    }));
+  }, [formattedCourse, handleFieldChange]);
+
+//   console.log(formData, "hh");
 
   return (
     <div className="flex justify-center min-h-screen bg-white">
@@ -185,7 +203,15 @@ const RegistrationForm = ({ course }: { course?: string }) => {
               <label className="block text-sm font-medium text-gray-700">
                 Chosen Program
               </label>
-              <select
+              <Dropdown
+                name="choosen_program"
+                options={programs}
+                value={formData.choosen_program}
+                onChange={handleFieldChange}
+                required
+                className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+              />
+              {/* <select
                 name="choosen_program"
                 required
                 value={formData.choosen_program}
@@ -198,7 +224,7 @@ const RegistrationForm = ({ course }: { course?: string }) => {
                     {program.label}
                   </option>
                 ))}
-              </select>
+              </select> */}
             </div>
           </div>
 
