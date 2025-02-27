@@ -1,9 +1,13 @@
 import RegistrationForm from "@/components/RegistrationForm";
 
-export default function RegisterCoursePage({
+
+type Params = Promise<{ course: string }>;
+
+export default async function RegisterCoursePage({
   params,
 }: {
-  params: { course: string };
+  params: Params;
 }) {
-  return <RegistrationForm course={params.course} />;
+  const { course } = await params;
+  return <RegistrationForm course={course} />;
 }
